@@ -3,8 +3,8 @@
    Purpose: Manages OTN OP1 KPI data with site-level availability metrics.
 */
 
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 

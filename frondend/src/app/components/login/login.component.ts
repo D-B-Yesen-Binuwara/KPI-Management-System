@@ -5,15 +5,14 @@
  Features: Azure SSO with MSAL, local login fallback, session persistence
 */
 
-import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../../services/auth.service';
-import { MsalService, MsalBroadcastService } from '@azure/msal-angular';
-import { AuthenticationResult } from '@azure/msal-browser';
+import { ActivatedRoute, Router } from '@angular/router';
+import { MsalBroadcastService, MsalService } from '@azure/msal-angular';
 import { first } from 'rxjs/operators';
 import { loginRequest } from '../../auth-config';
+import { AuthService } from '../../services/auth.service';
 
 /* ========== LOGIN COMPONENT ========== */
 

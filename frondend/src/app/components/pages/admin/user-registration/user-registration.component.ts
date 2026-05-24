@@ -6,12 +6,12 @@
 */
 
 // src/app/components/pages/admin/user-registration/user-registration.component.ts
-import { Component, ElementRef, OnInit, ViewChild, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { UserService, User, CreateUserDto, UpdateUserDto } from '../../../../services/user.service';
+import { ChangeDetectorRef, Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { environment } from '../../../../../environments/environment';
+import { CreateUserDto, UpdateUserDto, User, UserService } from '../../../../services/user.service';
 
 /* ========== USER REGISTRATION COMPONENT ========== */
 

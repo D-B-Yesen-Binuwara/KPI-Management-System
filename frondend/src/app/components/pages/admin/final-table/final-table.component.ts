@@ -5,10 +5,10 @@
  Features: KPI definition management, point allocation, metric tracking
 */
 
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
 
@@ -264,7 +264,7 @@ export class FinalTableComponent implements OnInit {
   calculateLiveWeightage(): string {
     const pointsApplicable = Number(this.form.get('pointsApplicable')?.value ?? 0);
     const totalPoints = this.calculateTotalPoints();
-    
+
     if (totalPoints <= 0 || pointsApplicable <= 0) return '0.00%';
     const weightage = (pointsApplicable / totalPoints) * 100;
     return weightage.toFixed(2) + '%';

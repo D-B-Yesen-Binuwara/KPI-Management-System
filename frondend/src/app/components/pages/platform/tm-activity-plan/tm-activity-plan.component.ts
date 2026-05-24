@@ -1,11 +1,11 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { catchError, finalize } from 'rxjs/operators';
-import { forkJoin, of } from 'rxjs';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import * as ExcelJS from 'exceljs';
-import { TmActivityService, ActivityRecord } from '../../../../services/tm-activity.service';
+import { of } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
+import { TmActivityService } from '../../../../services/tm-activity.service';
 
 type ProcessedDetail = {
   Column1: string;
@@ -405,7 +405,7 @@ export class TmActivityPlanComponent implements OnInit {
         return of([...MOCK_HARDCODED_DATA]);
       }),
       finalize(() => {
-        
+
         this.cdr.detectChanges();
       })
     ).subscribe(hardcoded => {
@@ -437,7 +437,7 @@ export class TmActivityPlanComponent implements OnInit {
 
 
       // Convert ActivityRecord[] to HardcodedRecord[]
-      this.hardcodedTableData = (hardcoded && hardcoded.length) 
+      this.hardcodedTableData = (hardcoded && hardcoded.length)
         ? hardcoded.map(activity => ({
             no: typeof activity.no === 'string' ? parseInt(activity.no) : activity.no,
             kpi: activity.kpi,
@@ -447,7 +447,7 @@ export class TmActivityPlanComponent implements OnInit {
             responsibleDGM: activity.responsibleDGM,
             definedOLADetails: activity.definedOLADetails,
             dataSources: activity.dataSources
-          })) 
+          }))
         : [...MOCK_HARDCODED_DATA];
       this.processDerivedData(this.tableData);
     });

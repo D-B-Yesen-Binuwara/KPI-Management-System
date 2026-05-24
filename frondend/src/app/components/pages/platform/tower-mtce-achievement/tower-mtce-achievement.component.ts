@@ -1,9 +1,9 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { catchError, finalize } from 'rxjs/operators';
-import { forkJoin, of } from 'rxjs';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import * as ExcelJS from 'exceljs';
+import { forkJoin, of } from 'rxjs';
+import { catchError, finalize } from 'rxjs/operators';
 import { environment } from '../../../../../environments/environment';
 
 /* ===================== TYPES ===================== */

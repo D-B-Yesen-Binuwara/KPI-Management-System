@@ -1,22 +1,22 @@
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  HostListener,
-  OnDestroy,
-  OnInit,
-  QueryList,
-  ViewChildren,
-  ChangeDetectorRef,
-} from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Subscription } from 'rxjs';
-import { Region as RegionApi, RegionService } from '../../../../services/region.service';
+import {
+    AfterViewInit,
+    ChangeDetectorRef,
+    Component,
+    ElementRef,
+    HostListener,
+    OnDestroy,
+    OnInit,
+    QueryList,
+    ViewChildren,
+} from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { Subscription } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
+import { Region as RegionApi, RegionService } from '../../../../services/region.service';
 
 type Region = {
   id: number;
@@ -101,10 +101,10 @@ export class CurrentMonthComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** same API you used in FinalTableComponent */
   private readonly apiBase = `${environment.apiUrl}/kpi-definitions`;
- 
+
 
   private readonly overallResultsApiBase = `${environment.apiUrl}/overall-kpi-results`;
- 
+
 
   @ViewChildren('leftRowRef', { read: ElementRef })
   private leftRowElements!: QueryList<ElementRef<HTMLTableRowElement>>;
@@ -640,7 +640,7 @@ export class CurrentMonthComponent implements OnInit, AfterViewInit, OnDestroy {
     totalCell1.alignment = { horizontal: 'right', vertical: 'middle' };
     totalCell1.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: totalRowBgColor } };
     worksheet.mergeCells(currentRow, currentCol, currentRow, currentCol + 5);
-    
+
     const totalCell2 = worksheet.getCell(currentRow, currentCol + 6);
     totalCell2.value = this.totalPointsApplicable;
     totalCell2.font = { bold: true, color: { argb: headerTextColor } };
@@ -729,7 +729,7 @@ export class CurrentMonthComponent implements OnInit, AfterViewInit, OnDestroy {
     this.kpiRows.forEach((row, idx) => {
       const isAltRow = idx % 2 === 1;
       currentCol = 8;
-      
+
       row.metrics.forEach(metric => {
         const achievedCell = worksheet.getCell(currentRow, currentCol);
         achievedCell.value = Number((metric.achieved).toFixed(2));
@@ -777,7 +777,7 @@ export class CurrentMonthComponent implements OnInit, AfterViewInit, OnDestroy {
     this.totalPointsAchievedByRegion.forEach((total, idx) => {
       const emptyCell = worksheet.getCell(currentRow, currentCol);
       emptyCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: totalRowBgColor } };
-      
+
       const maxCell = worksheet.getCell(currentRow, currentCol + 1);
       maxCell.value = Number(this.totalMaximumPointsByRegion[idx].toFixed(4));
       maxCell.numFmt = '0.0000';
@@ -801,7 +801,7 @@ export class CurrentMonthComponent implements OnInit, AfterViewInit, OnDestroy {
     this.totalPointsNormalized.forEach(norm => {
       const emptyCell1 = worksheet.getCell(currentRow, currentCol);
       emptyCell1.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: totalRowBgColor } };
-      
+
       const emptyCell2 = worksheet.getCell(currentRow, currentCol + 1);
       emptyCell2.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: totalRowBgColor } };
 

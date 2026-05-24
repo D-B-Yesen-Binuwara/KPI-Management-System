@@ -1,10 +1,9 @@
-import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule, HttpErrorResponse } from '@angular/common/http';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import * as ExcelJS from 'exceljs';
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
-import * as ExcelJS from 'exceljs';
-import { HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../../../environments/environment';
 
 /* ================= TYPES ================= */
@@ -246,7 +245,7 @@ export class RoutineMtncComponent implements OnInit {
     if (!platformKey) return 'No data';
     return `${this.placeholderMap[platformKey]?.[column] ?? '0.00'}%`;
   }
- 
+
 
   getDetailValue(
     record: PlatformRecord,
