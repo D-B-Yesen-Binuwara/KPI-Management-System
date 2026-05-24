@@ -1,0 +1,455 @@
+/* Header Container Styling */
+.current-month-header {
+  width: 100%;
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 20px;
+  border: 1px solid #ffffff;
+  gap: 12px;
+}
+
+/* Left Section: Text */
+.header-left .eyebrow {
+  color: #000000;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  font-size: 12px;
+  margin: 0 0 4px 0;
+}
+
+.header-left h1 {
+  color: #0057a6;
+  font-size: 2.1rem;
+  font-weight: 700;
+  margin: 0.5rem 0;
+  letter-spacing: 0.3px;
+}
+
+.header-left .subtitle {
+  color: #64748b;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* Center Section: Filters */
+.header-filters {
+  display: flex;
+  gap: 20px;
+  background: #f8fafc;
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  margin-left: auto;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-group label {
+  font-weight: 600;
+  color: #475569;
+  font-size: 14px;
+}
+
+.filter-select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background-color: white;
+  color: #1e293b;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.filter-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+/* Right Section: Actions */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: 12px;
+}
+
+.count-pill {
+  background: #dbeafe;
+  color: #1e40af;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 13px;
+  margin-right: 8px;
+}
+
+/* Button Styling */
+.primary-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+}
+
+.calculate-btn {
+  background-color: #0057a6;
+  color: white;
+}
+
+.calculate-btn:hover {
+  background-color: #004b90;
+  transform: translateY(-1px);
+}
+
+.calculate-btn:disabled {
+  background-color: #94a3b8;
+  cursor: not-allowed;
+}
+
+.export-btn {
+  background: linear-gradient(135deg, #4c98ee, #0f8a4c);
+  color: #ffffff;
+  border: 1px solid #cbd5e1;
+}
+
+.export-btn:hover {
+  background: linear-gradient(135deg, #3f8ce6, #0c7b44);
+  border-color: #94a3b8;
+}
+
+/* Component Container */
+.final-tables-container {
+  background: linear-gradient(135deg, #f0f7ff 0%, #f8fafc 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  padding: 5px;
+  width: 100%;
+}
+
+/* Side-by-side Table Layout */
+.side-by-side-tables {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  max-width: 100vw;
+  overflow: visible;
+  gap: 0;
+  align-items: flex-start;
+}
+
+/* LEFT TABLE: Sticky Logic */
+.kpi-table-container.sticky-left {
+  position: -webkit-sticky;
+  position: sticky;
+  left: 0;
+  z-index: 20;
+  background-color: #ffffff;
+  flex-shrink: 0;
+  /* SLT blue shadow for subtle branding */
+  box-shadow: 6px 0 24px rgba(11, 99, 214, 0.06);
+  border-right: 1px solid #ffffff;
+}
+
+/* RIGHT TABLE: Scrollable Logic */
+.final-table-container.scrollable-right {
+  flex-grow: 1;
+  overflow-x: auto;
+  min-width: 0;
+  background-color: #d4f036;
+}
+
+.final-distribution-table {
+  min-width: 2500px;
+  width: max-content;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+/* Hover effect */
+.final-distribution-table td:hover,
+.final-distribution-table th:hover {
+  cursor: pointer;
+  background-color: #08496c !important;
+  color: inherit !important;
+  transition: all 0.3s ease;
+}
+
+/* NEW: Vertical Group Divider */
+/* SLT blue & green separators between engineer blocks */
+.group-divider {
+  border-right: 4px solid rgba(227, 22, 22, 0.12) !important; /* soft SLT blue */
+}
+
+/* NEW MARGIN STYLE */
+.group-margin {
+  border-right: 3px solid #a9c4f5!important; /* lighter SLT blue accent */
+}
+
+.kpi-table {
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.kpi-table td,
+.final-distribution-table td {
+  height: 52px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  text-align: center;
+  border: 1px solid #e6f0ff;
+  font-size: 14px;
+  line-height: 1.3;
+  overflow: hidden;
+  vertical-align: middle;
+  color: #0f1724;
+  background-clip: padding-box;
+}
+
+.kpi-table .col-kra {
+  width: 120px;
+}
+
+/* KPI table headers — SLT blue */
+.kpi-table th {
+  height: 64px;
+  background: linear-gradient(180deg, #b8d2ff 0%, #9fbfff 100%);
+  color: #003b7a;
+  text-align: center;
+  font-size: 16px;
+  border: 2px solid #ffffff;
+  font-weight: 700;
+  box-sizing: border-box;
+  vertical-align: middle;
+  background-clip: padding-box;
+}
+
+.kpi-table thead tr.colSpan-header th {
+  color: #003b7a;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.kpi-table thead tr.colSpan-header:nth-child(1) th {
+  background: linear-gradient(
+    90deg,
+    #eef4ff 0%,
+    #bbd4ff 25%,
+    #a2c2ff 50%,
+    #bbd4ff 75%,
+    #eef4ff 100%
+  );
+}
+
+.kpi-table thead tr.colSpan-header:nth-child(2) th {
+  background: linear-gradient(
+    90deg,
+    #eef8f3 0%,
+    #bfe6dd 25%,
+    #a6d7cc 50%,
+    #bfe6dd 75%,
+    #eef8f3 100%
+  );
+}
+
+.kpi-table thead tr.colSpan-header:nth-child(3) th {
+  background: linear-gradient(180deg, #bfe4ee 0%, #a6d5e2 100%);
+}
+
+.kpi-table thead tr:last-child th {
+  background: linear-gradient(180deg, #b8d2ff 0%, #9fbfff 100%);
+  color: #003b7a;
+}
+
+
+/* Final distribution table headers — SLT green by default */
+.final-distribution-table thead th {
+  height: 64px;
+  background: linear-gradient(180deg, #b9ded4 0%, #a3d2c6 100%);
+  color: #003b7a;
+  text-align: center;
+  font-size: 16px;
+  border: 1px solid #ffffff;
+  font-weight: 700;
+  box-sizing: border-box;
+  vertical-align: middle;
+  background-clip: padding-box;
+}
+
+
+/* Header-row overrides for clearer hierarchy */
+.final-distribution-table thead .region-header {
+  background: linear-gradient(
+    90deg,
+    #eef4ff 0%,
+    #bbd4ff 25%,
+    #a2c2ff 50%,
+    #bbd4ff 75%,
+    #eef4ff 100%
+  );
+  color: #003b7a;
+}
+.final-distribution-table thead .province-header {
+  background: linear-gradient(
+    90deg,
+    #eef8f3 0%,
+    #b9ded4 25%,
+    #a3d2c6 50%,
+    #b9ded4 75%,
+    #eef8f3 100%
+  );
+  color: #003b7a;
+}
+.final-distribution-table thead .province-row th:nth-child(odd) {
+  background: linear-gradient(
+    90deg,
+    #eef8f3 0%,
+    #c9f3df 25%,
+    #b0e4d0 50%,
+    #c9f3df 75%,
+    #eef8f3 100%
+  );
+}
+.final-distribution-table thead .province-row th:nth-child(even) {
+  background: linear-gradient(
+    90deg,
+    #eef8f3 0%,
+    #a9dac2 25%,
+    #8fcaa8 50%,
+    #a9dac2 75%,
+    #eef8f3 100%
+  );
+}
+.final-distribution-table thead .province-row th.group-margin:nth-child(odd) {
+  border-right: 3px solid #b0e4d0 !important;
+}
+.final-distribution-table thead .province-row th.group-margin:nth-child(even) {
+  border-right: 3px solid #8fcaa8 !important;
+}
+.final-distribution-table thead .metro-1-header {
+  background: linear-gradient(180deg, #bfe8d9 0%, #a7dccb 100%);
+}
+.final-distribution-table thead .metro-2-header {
+  background: linear-gradient(180deg, #b6e2cf 0%, #9fd6c2 100%);
+}
+.final-distribution-table thead .ee-area-header {
+  background: linear-gradient(180deg, #b9dfea 0%, #a0cfdd 100%);
+  color: #003b7a;
+}
+.final-distribution-table thead .metrics-labels-row th {
+  background: linear-gradient(180deg, #b8d2ff 0%, #9fbfff 100%);
+  color: #003b7a;
+}
+
+/* Right Table Metric Widths */
+.achieved-cell,
+.achieved-header {
+  width: 110px;
+}
+
+.maximum-points-cell,
+.points-achieved-cell,
+.maximum-points-header,
+.points-achieved-header {
+  width: 110px;
+}
+
+.ee-area-header {
+  background: linear-gradient(180deg, #b9dfea 0%, #a0cfdd 100%);
+  color: #003b7a;
+  font-weight: 800;
+}
+
+/* Engineer & Area Info Font Adjustments */
+.nw-engineer {
+  font-weight: 700;
+  font-size: 14px;
+  display: block;
+}
+.rtom-area {
+  color: #a16207;
+  font-size: 15px;
+  font-weight: 500;
+  display: block;
+}
+
+/* Metric Cells Colors — SLT blue & green */
+.achieved-cell { background-color: #ECFDF5; color: #ffffff; }         /* green-50 / green-700 */
+.maximum-points-cell { background-color: #EAF4FF; color: #0B63D6; }    /* light-blue bg / SLT blue text */
+.points-achieved-cell {
+  background-color: #F7FFFB;
+  font-weight: 700;
+  color: #ffffff;
+  box-shadow: inset 0 -2px 0 rgba(20, 83, 45, 0.04);
+}
+
+/* Row striping — subtle pastel alternation + hover */
+.kpi-table tbody tr:nth-child(even) td,
+.final-distribution-table tbody tr:nth-child(even) td { background-color: #ffffff; }
+.kpi-table tbody tr:nth-child(odd) td,
+.final-distribution-table tbody tr:nth-child(odd) td { background-color: #F1F6FF; }
+
+.kpi-table tbody tr:hover td,
+.final-distribution-table tbody tr:hover td {
+  background-color: #F3FBFF; /* very light SLT blue highlight */
+  transition: background-color 120ms ease-in-out;
+}
+
+/* Summary rows (left table) */
+.kpi-table tbody tr.total-marks-row td {
+  background-color: #e7f0ff;
+  color: #0b2f6d;
+  font-weight: 700;
+}
+
+.kpi-table tbody tr.kpi-label-row td {
+  background-color: #e9f7f1;
+  color: #0b3d26;
+  font-weight: 700;
+}
+
+.kpi-table tbody tr.total-marks-row .total-points,
+.kpi-table tbody tr.kpi-label-row .kpi-label {
+  background-color: #dbeaff;
+  color: #0b2f6d;
+  font-weight: 800;
+}
+
+/* Summary rows (right table) */
+.final-distribution-table tbody tr.summary-row td {
+  background-color: #f2f7ff;
+}
+
+.final-distribution-table tbody tr.summary-row .maximum-points-cell {
+  background-color: #e6f0ff;
+  color: #0b2f6d;
+  font-weight: 700;
+}
+
+.final-distribution-table tbody tr.summary-row .points-achieved-cell {
+  background-color: #dbeaff;
+  color: #0b2f6d;
+  font-weight: 800;
+}
+
+.final-distribution-table tbody tr.total-row .points-achieved-cell {
+  background-color: #e0f4ea;
+  color: #0b3d26;
+  font-weight: 800;
+}

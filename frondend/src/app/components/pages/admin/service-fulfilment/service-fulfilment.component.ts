@@ -1,0 +1,240 @@
+/*
+ File: service-fulfilment.component.ts
+ Description: Service fulfilment KPI admin management
+ Purpose: CRUD operations for service fulfilment KPI metrics and thresholds.
+ Features: Data table management, metrics configuration, form handling
+*/
+
+import { Component, OnInit, inject, ChangeDetectorRef } from '@angular/core';
+import { CommonModule, DOCUMENT } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { ServiceFulfilmentKpiDto, ServiceFulfilmentKpiService } from '../../../../services/service-fulfilment-kpi.service';
+
+/* ========== ADMIN SERVICE FULFILMENT COMPONENT ========== */
+
+/* Service fulfilment KPI row with display order */
+type AdminKpiRow = ServiceFulfilmentKpiDto & { displayOrder?: number };
+
+@Component({
+  selector: 'app-admin-service-fulfilment',
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule],
+  templateUrl: './service-fulfilment.component.html',
+  styleUrls: ['./service-fulfilment.component.scss']
+})
+export class AdminServiceFulfilmentComponent implements OnInit {
+  private readonly defaultMonth = 11;
+  private readonly defaultYear = 2025;
+  private readonly document = inject(DOCUMENT);
+  private readonly cdr = inject(ChangeDetectorRef);
+
+  // Header
+  pageTitle = 'Service Fulfilment KPIs';
+
+  // Dashboard stats
+  activeKpis = 0;
+  targetsMet = 0;
+  avgWeightage = 0;
+  dgmCount = 0;
+
+  // Form
+  kpiForm!: FormGroup;
+  isEditing = false;
+  editingId: number | string | null = null;
+  showForm = false;
+
+  // Table data
+  kpiList: AdminKpiRow[] = [];
+
+  loading = false;
+  saving = false;
+  errorMessage = '';
+
+  constructor(
+    private fb: FormBuilder,
+    private serviceFulfilmentKpiService: ServiceFulfilmentKpiService
+  ) {}
+
+  ngOnInit(): void {
+    this.kpiForm = this.fb.group({
+      kpi: ['', Validators.required],
+      target: ['', Validators.required],
+      calculation: ['', Validators.required],
+      platform: ['', Validators.required],
+      responsibleDgm: ['', Validators.required],
+      definedOla: ['', Validators.required],
+      weightage: [0],
+      dataSources: ['', Validators.required],
+      month: [this.defaultMonth, Validators.required],
+      year: [this.defaultYear, Validators.required]
+    });
+
+    this.loadKpis();
+  }
+
+  // ================= LOAD =================
+  loadKpis(): void {
+    this.loading = true;
+
+    this.serviceFulfilmentKpiService.getAll().subscribe({
+      next: data => {
+        this.kpiList = data.map((kpi, index) => ({
+          ...kpi,
+          displayOrder: kpi.displayOrder ?? index + 1
+        }));
+        this.activeKpis = data.length;
+        const totalWeight = data.reduce((sum, k) => sum + (k.weightage ?? 0), 0);
+        this.avgWeightage = data.length ? Number((totalWeight / data.length).toFixed(1)) : 0;
+        this.dgmCount = new Set(data.map(k => k.responsibleDgm)).size;
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        console.error(err);
+        this.errorMessage = 'Failed to load KPI data';
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // ================= ADD =================
+  addNewKpi(): void {
+    this.isEditing = false;
+    this.editingId = null;
+    this.resetForm();
+    this.showForm = true;
+    this.scrollFormIntoView();
+  }
+
+  // ================= SUBMIT =================
+  onSubmit(): void {
+    if (this.kpiForm.invalid) {
+      this.kpiForm.markAllAsTouched();
+      return;
+    }
+
+    const formValue = this.kpiForm.value;
+    const definedOlaValue = (formValue.definedOla ?? '').toString().trim();
+
+    const payload: ServiceFulfilmentKpiDto = {
+      kpi: formValue.kpi,
+      target: formValue.target,
+      calculation: formValue.calculation,
+      platform: formValue.platform,
+      responsibleDgm: formValue.responsibleDgm,
+      defineDoladetails: definedOlaValue,
+      definedoladetails: definedOlaValue,
+      dataSources: formValue.dataSources,
+      weightage: Number(formValue.weightage),
+      month: Number(formValue.month),
+      year: Number(formValue.year)
+    };
+
+    this.saving = true;
+
+    const request$ = this.isEditing && this.editingId
+      ? this.serviceFulfilmentKpiService.update(this.editingId, payload)
+      : this.serviceFulfilmentKpiService.add(payload);
+
+    request$.subscribe({
+      next: () => {
+        this.resetForm();
+        this.loadKpis();
+        this.showForm = false;
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        console.error(err);
+        this.errorMessage = 'Save failed';
+        this.saving = false;
+        this.cdr.detectChanges();
+      },
+      complete: () => this.saving = false
+    });
+  }
+
+  // ================= EDIT =================
+  editKpi(index: number): void {
+    const kpi = this.kpiList[index];
+    this.isEditing = true;
+    this.editingId = kpi.id ?? (kpi as any).Id;
+    const definedOlaValue = this.resolveDefinedOlaValue(kpi);
+
+    this.kpiForm.patchValue({
+      kpi: kpi.kpi,
+      target: kpi.target,
+      calculation: kpi.calculation,
+      platform: kpi.platform,
+      responsibleDgm: kpi.responsibleDgm,
+      definedOla: definedOlaValue,
+      weightage: kpi.weightage,
+      dataSources: kpi.dataSources,
+      month: kpi.month,
+      year: kpi.year
+    });
+    this.showForm = true;
+    this.scrollFormIntoView();
+  }
+
+  // ================= DELETE =================
+  deleteKpi(index: number): void {
+    const kpi = this.kpiList[index];
+    const id = kpi.id ?? (kpi as any).Id;
+
+    if (!id || !confirm('Delete this KPI?')) return;
+
+    this.serviceFulfilmentKpiService.delete(id).subscribe({
+      next: () => {
+        this.loadKpis();
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        console.error(err);
+        this.errorMessage = 'Delete failed';
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // ================= RESET =================
+  resetForm(): void {
+    this.kpiForm.reset({
+      month: this.defaultMonth,
+      year: this.defaultYear
+    });
+    this.isEditing = false;
+    this.editingId = null;
+  }
+
+  toggleForm(): void {
+    if (this.showForm) {
+      this.closeForm();
+    } else {
+      this.addNewKpi();
+    }
+  }
+
+  closeForm(): void {
+    this.showForm = false;
+    this.resetForm();
+  }
+
+  private scrollFormIntoView(): void {
+    setTimeout(() => {
+      if (!this.showForm) {
+        return;
+      }
+      const element = this.document?.getElementById('service-fulfilment-form');
+      element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
+  private resolveDefinedOlaValue(kpi?: Partial<ServiceFulfilmentKpiDto>): string {
+    if (!kpi) {
+      return '';
+    }
+    const direct = (kpi as any).definedoladetails ?? (kpi as any).defineDoladetails;
+    return typeof direct === 'string' ? direct : '';
+  }
+}

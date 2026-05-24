@@ -1,0 +1,32 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace backend.Models
+{
+    [Table("msanmtcdata", Schema = "dbo")]
+    public class MsanMtcData
+    {
+        [Key]
+        [Column("id")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+        [Column("designation")]
+        public string? Designation { get; set; }
+
+        [Column("year")]
+        public int? Year { get; set; }   // FIXED
+
+        [Column("month", TypeName = "varchar(10)")]
+        public string? Month { get; set; }
+
+        [Column("scheduled")]
+        public int? Scheduled { get; set; }
+
+        [Column("attended")]
+        public int? Attended { get; set; }
+
+        [Column("cumulative_count")]
+        public int? CumulativeCount { get; set; }
+    }
+}

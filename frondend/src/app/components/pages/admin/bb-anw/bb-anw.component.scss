@@ -1,0 +1,189 @@
+//@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+/* Background and Container */
+.page-container {
+  min-height: 100vh;
+  position: relative;
+  padding: 40px 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow: hidden; /* Prevents blurred edges from leaking outside the container */
+  /* Background image sits behind the overlay so backdrop-filter can blur it */
+  background-image: url('/NW_KPI_Monitoring/assets/admin/SLT-Mobitel.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+/* Create the blur effect on the background image */
+.page-container::before {
+  content: '';
+  position: absolute;
+  inset: 0; /* top/right/bottom/left: 0 */
+
+  /* Semi-transparent overlay that blurs the background using backdrop-filter */
+  background: rgba(248, 250, 252, 0.55);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  z-index: 0;
+}
+
+/* Ensure page content sits above the overlay */
+.page-container > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Header Styling */
+.admin-header {
+  text-align: center;
+  margin-bottom: 40px;
+  h1 { font-size: clamp(2rem, 4vw, 2.8rem); color: #0057A6; margin: 0.5rem 0; font-weight: 700; letter-spacing: 0.3px; font-family: 'Space Grotesk', 'Segoe UI', sans-serif; }
+  .subtitle { color: #0f1b2c; margin: 0; font-size: 1rem; line-height: 1.5; font-family: 'Space Grotesk', 'Segoe UI', sans-serif; }
+  .stats-badge {
+    font-size: 0.85rem;
+    color: #0f1b2c;
+    .mode-tag { background: #eee; padding: 2px 8px; border-radius: 12px; }
+  }
+}
+
+/* Centering the Card */
+.form-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 60px;
+}
+
+.glass-card {
+  background: white;
+  width: 100%;
+  max-width: 420px;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+  
+  h2 { font-size: 1.2rem; margin-bottom: 25px; color: #333; font-weight: 600; }
+}
+
+/* Inputs */
+.form-group {
+  margin-bottom: 15px;
+  input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-sizing: border-box;
+    font-size: 0.9rem;
+    
+    &:focus { outline: none; border-color: #0056b3; }
+  }
+}
+
+/* Main Add Button */
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  background-color: #1a5fb4; /* Deep SLT Blue */
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(26, 95, 180, 0.3);
+  transition: transform 0.2s;
+
+  &:hover { transform: translateY(-1px); background-color: #164e96; }
+}
+
+/* Table Styling */
+.table-container {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  margin-top: 20px;
+}
+
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  
+  thead tr {
+    background-color: #0057A6;
+    color: white;
+    text-align: left;
+    font-size: 0.85rem;
+
+    th {
+      background-clip: padding-box;
+    }
+
+    th:first-child {
+      border-top-left-radius: 12px;
+    }
+
+    th:last-child {
+      border-top-right-radius: 12px;
+    }
+  }
+
+  th, td { padding: 15px 20px; }
+  th { border-right: 1px solid rgba(255, 255, 255, 0.85); }
+  th:last-child { border-right: none; }
+  
+  tbody tr {
+    border-bottom: 1px solid #f2f2f2;
+    font-size: 0.9rem;
+    &:last-of-type { border-bottom: 2px solid #0047ab; }
+  }
+}
+
+/* Table Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+
+  button {
+    padding: 6px 15px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.8rem;
+  }
+
+  .btn-edit {
+    background-color: #4caf50;
+  }
+
+  .btn-delete {
+    background-color: #e53935;
+  }
+}
+  /* ---------- Local Space Grotesk Fonts ---------- */
+  @font-face {
+    font-family: 'Space Grotesk';
+    src: url('/assets/fonts/SpaceGrotesk/SpaceGrotesk-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Space Grotesk';
+    src: url('/assets/fonts/SpaceGrotesk/SpaceGrotesk-Medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Space Grotesk';
+    src: url('/assets/fonts/SpaceGrotesk/SpaceGrotesk-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+  }
+

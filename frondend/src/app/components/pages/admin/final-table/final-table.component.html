@@ -1,0 +1,103 @@
+<div class="kpi-page">
+  <section class="kpi-hero">
+    <p class="eyebrow">Admin / Perspective Control</p>
+    <h1>{{ pageTitle }}</h1>
+    <p>Maintain final consolidated KPI tables across all scorecard perspectives.</p>
+  </section>
+
+  <section class="form-section">
+    <form class="kpi-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <h2>{{ editingId ? 'Update KPI Row' : 'Add KPI Row' }}</h2>
+
+      <div class="field-grid">
+        <div class="field-group">
+          <input type="text" formControlName="perspectives" placeholder="Perspectives" />
+        </div>
+        <div class="field-group">
+          <input type="text" formControlName="strategicObjectives" placeholder="Strategic Objectives" />
+        </div>
+        <div class="field-group">
+          <input type="text" formControlName="keyPerformanceIndicators" placeholder="Key Performance Indicators" />
+        </div>
+
+        <div class="field-group">
+          <input type="text" formControlName="unit" placeholder="Unit" />
+        </div>
+        <div class="field-group span-2">
+          <textarea formControlName="descriptionOfKPI" placeholder="Description of KPI"></textarea>
+        </div>
+
+        <div class="calculation-summary-container">
+          <div class="summary-row">
+            <span>Your Points:</span>
+            <span>{{ form.value.pointsApplicable || 0 }}</span>
+          </div>
+          <div class="summary-row">
+            <span>Total Points:</span>
+            <span>36000</span>
+          </div>
+          <div class="summary-highlight">
+            <span>Your Weightage:</span>
+            <span>{{ calculateLiveWeightage() }}</span>
+          </div>
+          <p class="formula-text">Formula: (Your Points ÷ Total Points) × 100%</p>
+        </div>
+
+        <div class="field-group">
+          <label>Points Applicable *</label>
+          <input type="number" formControlName="pointsApplicable" placeholder="0" />
+        </div>
+
+        <div class="field-group span-full">
+          <label>Weightage (%) *</label>
+          <div class="weightage-display-box">
+            {{ calculateLiveWeightage() }}
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="submit" class="primary-btn" [disabled]="form.invalid || saving">
+          {{ editingId ? 'Update Record' : 'Add Record' }}
+        </button>
+        <button type="button" class="secondary-btn" *ngIf="editingId" (click)="onCancelEdit()">
+          Cancel Edit
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <section class="table-section">
+    <div class="state" *ngIf="loading">Loading records...</div>
+
+    <table class="kpi-table" *ngIf="!loading && records.length">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Perspectives</th>
+          <th>Objectives</th>
+          <th>KPI</th>
+          <th>Unit</th>
+          <th>Weightage (%)</th>
+          <th>Points</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let record of records; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ record.perspectives }}</td>
+          <td>{{ record.strategicObjectives }}</td>
+          <td>{{ record.keyPerformanceIndicators }}</td>
+          <td>{{ record.unit }}</td>
+          <td>{{ getComputedWeightageForRecord(record) }}</td>
+          <td>{{ record.pointsApplicable }}</td>
+          <td>
+            <button type="button" class="edit" (click)="onEdit(record)">Edit</button>
+            <button type="button" class="delete" (click)="onDelete(record.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</div>
