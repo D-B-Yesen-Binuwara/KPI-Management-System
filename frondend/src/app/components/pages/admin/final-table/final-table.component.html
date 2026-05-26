@@ -14,6 +14,9 @@
           <input type="text" formControlName="perspectives" placeholder="Perspectives" />
         </div>
         <div class="field-group">
+          <input type="text" formControlName="category" placeholder="Category" />
+        </div>
+        <div class="field-group">
           <input type="text" formControlName="strategicObjectives" placeholder="Strategic Objectives" />
         </div>
         <div class="field-group">
@@ -85,6 +88,7 @@
         <tr>
           <th>#</th>
           <th>Perspectives</th>
+          <th>Category</th>
           <th>Objectives</th>
           <th>KPI</th>
           <th>Unit</th>
@@ -97,6 +101,7 @@
         <tr *ngFor="let record of records; let i = index">
           <td>{{ i + 1 }}</td>
           <td>{{ record.perspectives }}</td>
+          <td>{{ record.category }}</td>
           <td>{{ record.strategicObjectives }}</td>
           <td>{{ record.keyPerformanceIndicators }}</td>
           <td>{{ record.unit }}</td>

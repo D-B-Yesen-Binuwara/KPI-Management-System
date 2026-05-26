@@ -18,6 +18,7 @@ import { environment } from '../../../../../environments/environment';
 export type KpiDefinition = {
   id: number;
   perspectives: string;
+  category?: string;
   strategicObjectives: string;
   keyPerformanceIndicators: string;
   unit: string;
@@ -44,6 +45,7 @@ export type UpsertKpiDefinitionRequest = {
 
   pointsApplicable: number;
   totalPoints: number;
+  category?: string;
   weightage: number;
 
   month: number;
@@ -77,6 +79,7 @@ export class FinalTableComponent implements OnInit {
   // ✅ weightage is displayed but NOT editable, so keep a disabled control
   form = this.fb.nonNullable.group({
     perspectives: ['', [Validators.required]],
+    category: ['', []],
     strategicObjectives: ['', [Validators.required]],
     keyPerformanceIndicators: ['', [Validators.required]],
     unit: ['', [Validators.required]],
@@ -92,6 +95,7 @@ export class FinalTableComponent implements OnInit {
 
   ngOnInit(): void {
     this.form.patchValue({ totalPoints: this.getPersistedTotalPoints() });
+    this.form.patchValue({ category: '' });
     this.fetchData();
   }
 
@@ -158,6 +162,7 @@ export class FinalTableComponent implements OnInit {
     // ✅ patchValue because weightage control is disabled
     this.form.patchValue({
       perspectives: record.perspectives ?? '',
+      category: record.category ?? '',
       strategicObjectives: record.strategicObjectives ?? '',
       keyPerformanceIndicators: record.keyPerformanceIndicators ?? '',
       unit: record.unit ?? '',
@@ -219,6 +224,7 @@ export class FinalTableComponent implements OnInit {
 
     return {
       perspectives: raw.perspectives.trim(),
+      category: (raw.category ?? '').trim(),
       strategicObjectives: raw.strategicObjectives.trim(),
       keyPerformanceIndicators: raw.keyPerformanceIndicators.trim(),
       unit: raw.unit.trim(),
@@ -237,6 +243,7 @@ export class FinalTableComponent implements OnInit {
   private resetForm(): void {
     this.form.reset({
       perspectives: '',
+      category: '',
       strategicObjectives: '',
       keyPerformanceIndicators: '',
       unit: '',
@@ -286,6 +293,7 @@ export class FinalTableComponent implements OnInit {
     return {
       id: Number(raw?.id ?? raw?.Id ?? 0),
       perspectives: raw?.perspectives ?? raw?.Perspectives ?? '',
+      category: raw?.category ?? raw?.Category ?? '',
       strategicObjectives: raw?.strategicObjectives ?? raw?.StrategicObjectives ?? '',
       keyPerformanceIndicators: raw?.keyPerformanceIndicators ?? raw?.KeyPerformanceIndicators ?? '',
       unit: raw?.unit ?? raw?.Unit ?? '',
