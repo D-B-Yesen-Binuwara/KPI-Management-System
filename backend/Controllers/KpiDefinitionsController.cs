@@ -116,6 +116,7 @@ namespace backend.Controllers
                 KeyPerformanceIndicators = dto.KeyPerformanceIndicators.Trim(),
                 Unit = dto.Unit.Trim(),
                 DescriptionOfKPI = dto.DescriptionOfKPI.Trim(),
+                Category = dto.Category?.Trim() ?? string.Empty,
 
                 PointsApplicable = dto.PointsApplicable,
                 TotalPoints = ResolveTotalPoints(dto.TotalPoints),
@@ -171,6 +172,7 @@ namespace backend.Controllers
             entity.KeyPerformanceIndicators = dto.KeyPerformanceIndicators.Trim();
             entity.Unit = dto.Unit.Trim();
             entity.DescriptionOfKPI = dto.DescriptionOfKPI.Trim();
+            entity.Category = dto.Category?.Trim() ?? entity.Category;
 
             entity.PointsApplicable = dto.PointsApplicable;
             entity.TotalPoints = ResolveTotalPoints(dto.TotalPoints ?? entity.TotalPoints);
@@ -269,6 +271,7 @@ namespace backend.Controllers
             KeyPerformanceIndicators = x.KeyPerformanceIndicators,
             Unit = x.Unit,
             DescriptionOfKPI = x.DescriptionOfKPI,
+            Category = x.Category,
             Weightage = x.Weightage,
             PointsApplicable = x.PointsApplicable,
             TotalPoints = ResolveTotalPoints(x.TotalPoints),

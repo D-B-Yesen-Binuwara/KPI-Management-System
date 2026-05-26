@@ -54,6 +54,11 @@ namespace backend.Models
         [Column("totalPoints")]
         public int TotalPoints { get; set; } = 36000;
 
+        // Optional category for the KPI
+        [Column("category")]
+        [MaxLength(50)]
+        public string? Category { get; set; } = string.Empty;
+
         // Timestamp when the KPI definition was created
         [Column("createdAt")]
         public string? CreatedAt { get; set; }

@@ -48,5 +48,9 @@ namespace backend.DTOs
         // Year for which this KPI applies (range 2000-2100, optional)
         [Range(2000, 2100)]
         public int? Year { get; set; }
+
+        // Optional category for the KPI (keeps Perspectives unchanged)
+        [MaxLength(50)]
+        public string? Category { get; set; }
     }
 }

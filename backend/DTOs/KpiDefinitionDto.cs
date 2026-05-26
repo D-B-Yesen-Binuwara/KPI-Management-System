@@ -39,6 +39,9 @@ namespace backend.DTOs
         // Total points used for KPI weightage calculation
         public int TotalPoints { get; set; }
 
+        // Optional category for the KPI
+        public string? Category { get; set; }
+
         // Timestamp when the KPI definition was created
         public string? CreatedAt { get; set; }
 
