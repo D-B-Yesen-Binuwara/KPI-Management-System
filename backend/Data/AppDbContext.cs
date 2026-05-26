@@ -371,6 +371,11 @@ namespace backend.Data
                     .HasMaxLength(50)
                     .IsRequired();
 
+                entity.Property(x => x.Category)
+                    .HasColumnName("category")
+                    .HasMaxLength(50)
+                    .IsRequired(false);
+
                 entity.Property(x => x.StrategicObjectives)
                     .HasColumnName("strategicObjectives")
                     .HasMaxLength(50)
