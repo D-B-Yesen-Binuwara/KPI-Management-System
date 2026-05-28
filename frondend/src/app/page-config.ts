@@ -34,6 +34,16 @@ export const platformNavOptions: NavOption[] = [
     title: 'Platform KPI — Service Fulfilment'
   },
   {
+    label: 'Enterprise KPI',
+    path: 'platform/enterprise-kpi',
+    title: 'Platform KPI — Enterprise KPI'
+  },
+  {
+    label: 'Other Operator KPI',
+    path: 'platform/other-kpi',
+    title: 'Platform KPI — Other Operator KPI'
+  },
+  {
     label: 'IP NW OP',
     path: 'platform/ip-nw-op',
     title: 'Platform KPI — IP NW OP'

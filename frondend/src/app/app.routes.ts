@@ -15,6 +15,8 @@ import { CurrentMonthComponent } from './components/pages/overall/current-month/
 // Placeholder for future previous month component
 /* Platform KPI Components */
 import { ServiceFulfilmentComponent } from './components/pages/platform/service-fulfilment/service-fulfilment.component';
+import { EnterpriseKpiComponent } from './components/pages/platform/enterprise-kpi/enterprise-kpi.component';
+import { OtherKpiComponent } from './components/pages/platform/other-kpi/other-kpi.component';
 import { IpNwOpComponent } from './components/pages/platform/ip-nw-op/ip-nw-op.component';
 import { BbAnwComponent } from './components/pages/platform/bb-anw/bb-anw.component';
 import { OtnOpComponent } from './components/pages/platform/otn-op/otn-op.component';
@@ -30,8 +32,8 @@ import { AdminIpNwOpComponent } from './components/pages/admin/ip-nw-op/ip-nw-op
 import { BbAnwComponent as AdminBbAnwComponent } from './components/pages/admin/bb-anw/bb-anw.component';
 import { OtnOp1Component } from './components/pages/admin/otn-op-1/otn-op-1.component';
 import { OtnOp2Component } from './components/pages/admin/otn-op-2/otn-op-2.component';
-import { EnterpriseKpiComponent } from './components/pages/admin/enterprise-kpi/enterprise-kpi.component';
-import { OtherKpiComponent } from './components/pages/admin/other-kpi/other-kpi.component';
+import { EnterpriseKpiComponent as AdminEnterpriseKpiComponent } from './components/pages/admin/enterprise-kpi/enterprise-kpi.component';
+import { OtherKpiComponent as AdminOtherKpiComponent } from './components/pages/admin/other-kpi/other-kpi.component';
 import { TowerMtceAchievementComponent as AdminTowerMtceAchievementComponent } from './components/pages/admin/tower-mtce-achievement/tower-mtce-achievement.component';
 import { AdminTmActivityPlanComponent } from './components/pages/admin/tm-activity-plan/tm-activity-plan.component';
 import { AdminRoutineMtncComponent } from './components/pages/admin/routine-mtnc/routine-mtnc.component';
@@ -53,6 +55,8 @@ export const routes: Routes = [
   // Placeholder for future previous month route
   /* Platform KPI Routes */
   { path: 'platform/service-fulfilment', component: ServiceFulfilmentComponent, canActivate: [AuthGuard] },
+  { path: 'platform/enterprise-kpi', component: EnterpriseKpiComponent, canActivate: [AuthGuard] },
+  { path: 'platform/other-kpi', component: OtherKpiComponent, canActivate: [AuthGuard] },
   { path: 'platform/ip-nw-op', component: IpNwOpComponent, canActivate: [AuthGuard] },
   { path: 'platform/bb-anw', component: BbAnwComponent, canActivate: [AuthGuard] },
   { path: 'platform/otn-op', component: OtnOpComponent, canActivate: [AuthGuard] },
@@ -73,8 +77,8 @@ export const routes: Routes = [
   { path: 'admin/routine-mtnc', component: AdminRoutineMtncComponent, canActivate: [AuthGuard], data: { roles: ['Admin', 'SuperAdmin'] } },
   { path: 'admin/email-service', component: EmailServiceComponent, canActivate: [AuthGuard], data: { roles: ['Admin', 'SuperAdmin'] } },
   { path: 'admin/final-table', component: FinalTableComponent, canActivate: [AuthGuard], data: { roles: ['Admin', 'SuperAdmin'] } },
-  { path: 'admin/enterprise-kpi', component: EnterpriseKpiComponent, canActivate: [AuthGuard], data: { roles: ['Admin', 'SuperAdmin'] } },
-  { path: 'admin/other-kpi', component: OtherKpiComponent, canActivate: [AuthGuard], data: { roles: ['Admin', 'SuperAdmin'] } },
+  { path: 'admin/enterprise-kpi', component: AdminEnterpriseKpiComponent, canActivate: [AuthGuard], data: { roles: ['Admin', 'SuperAdmin'] } },
+  { path: 'admin/other-kpi', component: AdminOtherKpiComponent, canActivate: [AuthGuard], data: { roles: ['Admin', 'SuperAdmin'] } },
   { path: '**', redirectTo: 'dashboard' },
   { path: 'dashboard', canActivate: [MsalGuard], loadComponent: () => import('./components/dashboard/dashboard.component').then(m => m.DashboardComponent)}
 ];
