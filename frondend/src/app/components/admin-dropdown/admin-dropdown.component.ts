@@ -52,9 +52,7 @@ export class AdminDropdownComponent implements OnChanges {
     'User Registration',
     'Region Management',
     'E-mail Service',
-    'KPI Management',
-    'Enterprise KPI',
-    'Other KPI'
+    'KPI Management'
   ]);
 
   /* Labels for platform-related navigation options */
@@ -63,7 +61,9 @@ export class AdminDropdownComponent implements OnChanges {
     'BB ANW',
     'IP NW OP',
     'OTN OP 1',
-    'OTN OP 2'
+    'OTN OP 2',
+    'Enterprise KPI',
+    'Other KPI'
   ]);
 
   constructor(private router: Router) {}
