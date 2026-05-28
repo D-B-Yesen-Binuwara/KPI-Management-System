@@ -818,6 +818,154 @@ namespace backend.Migrations
                     b.ToTable("ServiceFulfilmentKpiMetrics", "dbo");
                 });
 
+            modelBuilder.Entity("backend.Models.EnterpriseKpi", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("Id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Division")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("division");
+
+                    b.Property<decimal?>("KpiPercent")
+                        .HasColumnType("decimal(6,3)")
+                        .HasColumnName("kpi_percent");
+
+                    b.Property<string>("NetworkEngineerKpi")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("network_engineer_kpi");
+
+                    b.Property<string>("Section")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("section");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EnterpriseKpi", "dbo");
+                });
+
+            modelBuilder.Entity("backend.Models.EnterpriseKpiMetric", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("Id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AreaCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("area_code");
+
+                    b.Property<int>("EnterpriseKpiId")
+                        .HasColumnType("int")
+                        .HasColumnName("EnterpriseKpiId");
+
+                    b.Property<byte>("Month")
+                        .HasColumnType("tinyint")
+                        .HasColumnName("month");
+
+                    b.Property<decimal?>("KpiValue")
+                        .HasColumnType("decimal(18,4)")
+                        .HasColumnName("kpi_value");
+
+                    b.Property<short>("Year")
+                        .HasColumnType("smallint")
+                        .HasColumnName("year");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EnterpriseKpiId", "AreaCode", "Month", "Year")
+                        .IsUnique()
+                        .HasDatabaseName("UQ_EnterpriseKpiMetrics_Row");
+
+                    b.ToTable("EnterpriseKpiMetrics", "dbo");
+                });
+
+            modelBuilder.Entity("backend.Models.OtherKpi", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("Id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Division")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("division");
+
+                    b.Property<decimal?>("KpiPercent")
+                        .HasColumnType("decimal(6,3)")
+                        .HasColumnName("kpi_percent");
+
+                    b.Property<string>("NetworkEngineerKpi")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("network_engineer_kpi");
+
+                    b.Property<string>("Section")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .HasColumnName("section");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OtherOperatorKpi", "dbo");
+                });
+
+            modelBuilder.Entity("backend.Models.OtherKpiMetric", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("Id");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AreaCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("area_code");
+
+                    b.Property<int>("OtherKpiId")
+                        .HasColumnType("int")
+                        .HasColumnName("OtherKpiId");
+
+                    b.Property<byte>("Month")
+                        .HasColumnType("tinyint")
+                        .HasColumnName("month");
+
+                    b.Property<decimal?>("KpiValue")
+                        .HasColumnType("decimal(18,4)")
+                        .HasColumnName("kpi_value");
+
+                    b.Property<short>("Year")
+                        .HasColumnType("smallint")
+                        .HasColumnName("year");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OtherKpiId", "AreaCode", "Month", "Year")
+                        .IsUnique()
+                        .HasDatabaseName("UQ_OtherKpiMetrics_Row");
+
+                    b.ToTable("OtherKpiMetrics", "dbo");
+                });
+
             modelBuilder.Entity("backend.Models.TmActivity1", b =>
                 {
                     b.Property<int>("Id")
@@ -1086,6 +1234,30 @@ namespace backend.Migrations
                         .HasConstraintName("FK_ServiceFulfilmentKpiMetrics_ServiceFulfilmentKpi");
 
                     b.Navigation("ServiceFulfilmentKpi");
+                });
+
+            modelBuilder.Entity("backend.Models.EnterpriseKpiMetric", b =>
+                {
+                    b.HasOne("backend.Models.EnterpriseKpi", "EnterpriseKpi")
+                        .WithMany()
+                        .HasForeignKey("EnterpriseKpiId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_EnterpriseKpiMetrics_EnterpriseKpi");
+
+                    b.Navigation("EnterpriseKpi");
+                });
+
+            modelBuilder.Entity("backend.Models.OtherKpiMetric", b =>
+                {
+                    b.HasOne("backend.Models.OtherKpi", "OtherKpi")
+                        .WithMany()
+                        .HasForeignKey("OtherKpiId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_OtherKpiMetrics_OtherKpi");
+
+                    b.Navigation("OtherKpi");
                 });
 
             modelBuilder.Entity("backend.Models.User", b =>

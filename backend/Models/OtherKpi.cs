@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace backend.Models
 {
-    [Table("OtherKpi")]
+    [Table("OtherOperatorKpi")]
     public class OtherKpi
     {
         [Key]
