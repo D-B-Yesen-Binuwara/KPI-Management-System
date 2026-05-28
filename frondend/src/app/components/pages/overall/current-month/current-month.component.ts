@@ -225,7 +225,7 @@ export class CurrentMonthComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Manually trigger calculation/refresh of KPI results */
   calculate(): void {
-    this.loadRegions();
+    this.recalculateOverallResults();
   }
 
   @HostListener('window:resize')
@@ -392,11 +392,25 @@ export class CurrentMonthComponent implements OnInit, AfterViewInit, OnDestroy {
     this.noOverallResults = false;
     const month = this.selectedMonth;
     const year = this.selectedYear;
-    const url = `${this.overallResultsApiBase}/calculate?month=${month}&year=${year}`;
+    const url = `${this.overallResultsApiBase}?month=${month}&year=${year}`;
 
-    this.http.post<OverallKpiResultApi[]>(url, {}).subscribe({
+    this.http.get<OverallKpiResultApi[]>(url).subscribe({
       next: (rows) => {
-        const list = Array.isArray(rows) ? rows : [];
+        const raw = Array.isArray(rows) ? rows : [];
+
+        // Normalize incoming JSON property casing (handle both camelCase and PascalCase)
+        const list: OverallKpiResultApi[] = raw.map((r: any) => ({
+          id: Number(r.id ?? r.Id ?? 0),
+          kpiDefinitionId: Number(r.kpiDefinitionId ?? r.KpiDefinitionId ?? 0),
+          areaCode: String(r.areaCode ?? r.AreaCode ?? ''),
+          achievedKpi: Number(r.achievedKpi ?? r.AchievedKpi ?? 0),
+          maximumPointsPerKpi: Number(r.maximumPointsPerKpi ?? r.MaximumPointsPerKpi ?? 0),
+          pointsAchieved: Number(r.pointsAchieved ?? r.PointsAchieved ?? 0),
+          overallKpiValuePercent: Number(r.overallKpiValuePercent ?? r.OverallKpiValuePercent ?? 0),
+          month: Number(r.month ?? r.Month ?? 0),
+          year: Number(r.year ?? r.Year ?? 0),
+        }));
+
         this.noOverallResults = list.length === 0;
         const grouped = new Map<number, OverallKpiResultApi[]>();
 
@@ -443,6 +457,27 @@ export class CurrentMonthComponent implements OnInit, AfterViewInit, OnDestroy {
         this.computeTotals();
         this.scheduleRowSync();
         this.loading = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  private recalculateOverallResults(): void {
+    this.loading = true;
+    this.error = null;
+
+    const month = this.selectedMonth;
+    const year = this.selectedYear;
+    const url = `${this.overallResultsApiBase}/calculate?month=${month}&year=${year}`;
+
+    this.http.post<OverallKpiResultApi[]>(url, {}).subscribe({
+      next: () => {
+        this.loadRegions();
+      },
+      error: (err) => {
+        console.error('Failed recalculating overall KPI results:', err);
+        this.loading = false;
+        this.error = 'Unable to recalculate overall KPI results.';
         this.cdr.detectChanges();
       },
     });
