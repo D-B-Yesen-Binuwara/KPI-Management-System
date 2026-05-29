@@ -125,15 +125,44 @@ END");
             new backend.Models.Page { PageId = 6, PageCode = "ROUTINE_MTNC", PageName = "ROUTINE MTNC" },
             new backend.Models.Page { PageId = 7, PageCode = "TOWER_MTCE", PageName = "TOWER MTCE ACHIEVEMENT" },
             new backend.Models.Page { PageId = 8, PageCode = "ENTERPRISE_KPI", PageName = "Enterprise KPI" },
-            new backend.Models.Page { PageId = 9, PageCode = "OTHER_OPERATOR_KPI", PageName = "Other Operator KPI" }
+            new backend.Models.Page { PageId = 9, PageCode = "OTHER_OPERATOR_KPI", PageName = "Other Operator KPI" },
+            new backend.Models.Page { PageId = 10, PageCode = "OTHER_KPI", PageName = "Other KPI" }
         };
 
         var existingPageIds = context.Pages.Select(p => p.PageId).ToList();
         var missingPages = pageSeeds.Where(p => !existingPageIds.Contains(p.PageId)).ToList();
         if (missingPages.Any())
         {
-            context.Pages.AddRange(missingPages);
-            context.SaveChanges();
+            try
+            {
+                // Ensure we use the same physical connection for SET IDENTITY_INSERT and the insert.
+                await context.Database.OpenConnectionAsync();
+                try
+                {
+                    await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.Page ON;");
+                    context.Pages.AddRange(missingPages);
+                    context.SaveChanges();
+                    await context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT dbo.Page OFF;");
+                }
+                finally
+                {
+                    await context.Database.CloseConnectionAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                // If enabling IDENTITY_INSERT fails (e.g., PageId is not an identity column), fall back to normal insert.
+                try
+                {
+                    context.Pages.AddRange(missingPages);
+                    context.SaveChanges();
+                }
+                catch (Exception innerEx)
+                {
+                    Console.WriteLine($"Failed inserting pages: {innerEx.Message}");
+                    throw;
+                }
+            }
         }
 
         // Fix: Ensure Admin has correct Role (SuperAdmin = 1) and Password hash if missing
