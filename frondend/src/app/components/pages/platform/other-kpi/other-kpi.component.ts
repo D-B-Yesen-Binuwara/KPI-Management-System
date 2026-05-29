@@ -408,4 +408,12 @@ export class OtherKpiComponent extends BaseOtherKpiMetricsComponent {
   ) {
     super('Other KPI', 'OTHER KPI', toastr, otherKpiService, regionService, authService, cdr);
   }
+
+  get hasAreaFilter(): boolean {
+    return !!(this.formValues && this.formValues.dropdown4);
+  }
+
+  get selectedAreaLabel(): string {
+    return this.formValues && this.formValues.dropdown4 ? (this.optionMapping[this.formValues.dropdown4] || this.formValues.dropdown4) : '';
+  }
 }

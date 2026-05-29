@@ -11,7 +11,7 @@ import { BaseOtherKpiMetricsComponent } from '../other-kpi/other-kpi.component';
   selector: 'app-other-operator-kpi',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: '../other-kpi/other-kpi.component.html',
+  templateUrl: './other-operator-kpi.component.html',
   styleUrls: ['../other-kpi/other-kpi.component.scss']
 })
 export class OtherOperatorKpiComponent extends BaseOtherKpiMetricsComponent {
@@ -23,5 +23,13 @@ export class OtherOperatorKpiComponent extends BaseOtherKpiMetricsComponent {
     cdr: ChangeDetectorRef
   ) {
     super('Other Operator KPI', 'OTHER OPERATOR KPI', toastr, otherOperatorKpiService, regionService, authService, cdr);
+  }
+
+  get hasAreaFilter(): boolean {
+    return !!(this.formValues && this.formValues.dropdown4);
+  }
+
+  get selectedAreaLabel(): string {
+    return this.formValues && this.formValues.dropdown4 ? (this.optionMapping[this.formValues.dropdown4] || this.formValues.dropdown4) : '';
   }
 }
