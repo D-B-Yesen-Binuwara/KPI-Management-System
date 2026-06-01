@@ -245,7 +245,6 @@ namespace backend.Controllers
                 .Select(x => new NamedKpi("otn2", x.Id, x.NetworkEngineerKpi ?? string.Empty))
                 .ToListAsync();
             var sfKpis = await _db.ServiceFulfilmentKpis.AsNoTracking()
-                .Where(x => x.Month == month && x.Year == year)
                 .Select(x => new NamedKpi("sf", x.Id, x.Kpi ?? string.Empty))
                 .ToListAsync();
 
