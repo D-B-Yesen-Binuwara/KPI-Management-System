@@ -131,6 +131,10 @@ namespace backend.Controllers
                 .Where(x => x.Month == month && x.Year == year)
                 .ToListAsync();
 
+            var agedFailureMetrics = await _db.AgedNetworkFailureMetrics.AsNoTracking()
+                .Where(x => x.Month == month && x.Year == year)
+                .ToListAsync();
+
             var entMetrics = await _db.EnterpriseKpiMetrics.AsNoTracking()
                 .Where(x => x.Month == month && x.Year == year)
                 .ToListAsync();
@@ -268,6 +272,37 @@ namespace backend.Controllers
             foreach (var kpi in kpis)
             {
                 var matchedKpi = FindBestMatch(kpi.KeyPerformanceIndicators, allNamedKpis);
+                // Special handling for Aged Network Failure KPIs
+                if (IsAgedNetworkFailureKpi(kpi.KeyPerformanceIndicators))
+                {
+                    foreach (var area in normalizedAreas)
+                    {
+                        var achieved = CalculateAgedNetworkFailureKpi(agedFailureMetrics, area);
+                        var maxPoints = normalizedAreas.Count > 0
+                            ? Math.Round((decimal)kpi.PointsApplicable / normalizedAreas.Count, 4)
+                            : 0m;
+                        var targetValue = TryParseTargetValue(kpi.DescriptionOfKPI);
+                        var pointsAchieved = CalculatePointsAchieved(maxPoints, achieved, targetValue);
+
+                        results.Add(new OverallKpiResult
+                        {
+                            KpiCode = $"KPI-{kpi.Id}",
+                            KpiDefinitionId = kpi.Id,
+                            KpiName = kpi.KeyPerformanceIndicators,
+                            Platform = kpi.Perspectives,
+                            AreaCode = area,
+                            TargetValue = targetValue,
+                            AchievedKpi = achieved,
+                            MaximumPointsPerKpi = maxPoints,
+                            PointsAchieved = pointsAchieved,
+                            Month = month,
+                            Year = year,
+                            CalculatedAt = nowUtc
+                        });
+                    }
+                    continue;
+                }
+
                 var snapshots = BuildAreaSnapshots(matchedKpi, ipMetrics, bbMetrics, otn1Metrics, otn2Metrics, sfMetrics, entMetrics, otherMetrics, enterpriseTargets, otherTargets, daysInMonth);
 
                 var areaSnapshots = normalizedAreas
@@ -773,6 +808,25 @@ namespace backend.Controllers
 
             var minutesPerNode = 24m * 60m * daysInMonth;
             return totalMinutes / minutesPerNode;
+        }
+
+        // =========================================================
+        // AGED NETWORK FAILURE KPI HELPERS
+        // =========================================================
+        private static bool IsAgedNetworkFailureKpi(string kpiName)
+            => (kpiName ?? string.Empty).Contains("Unavailability of Aged Network Failures",
+                StringComparison.OrdinalIgnoreCase);
+
+        // Returns 0 if ANY platform record has has_unavailability = 1, else 100.
+        private static decimal CalculateAgedNetworkFailureKpi(
+            List<AgedNetworkFailureMetric> metrics, string normalizedArea)
+        {
+            var areaMetrics = metrics
+                .Where(x => NormalizeArea(x.AreaCode) == normalizedArea)
+                .ToList();
+
+            if (!areaMetrics.Any()) return 100m;
+            return areaMetrics.Any(x => x.HasUnavailability == 1) ? 0m : 100m;
         }
     }
 }
