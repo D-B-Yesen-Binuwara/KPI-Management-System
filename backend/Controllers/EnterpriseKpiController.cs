@@ -192,31 +192,33 @@ namespace backend.Controllers
             if (string.IsNullOrWhiteSpace(normalizedArea))
                 return BadRequest("AreaCode is required.");
 
+            var kpiName = string.IsNullOrWhiteSpace(dto.KpiName) ? kpi.NetworkEngineerKpi : dto.KpiName.Trim();
+
             var metric = await _db.EnterpriseKpiMetrics.FirstOrDefaultAsync(x =>
-                x.EnterpriseKpiId == dto.EnterpriseKpiId &&
                 x.AreaCode.ToUpper() == normalizedArea &&
+                x.KpiName == kpiName &&
                 x.Month == dto.Month &&
                 x.Year == dto.Year);
 
-            if (metric == null)
+            bool isNew = metric == null;
+            if (isNew)
             {
                 metric = new EnterpriseKpiMetric
                 {
                     EnterpriseKpiId = dto.EnterpriseKpiId,
+                    KpiName = kpiName,
                     AreaCode = normalizedArea,
                     KpiValue = dto.KpiValue,
                     Month = dto.Month,
-                    Year = dto.Year
+                    Year = dto.Year,
+                    CreatedAt = DateTime.UtcNow
                 };
-
                 _db.EnterpriseKpiMetrics.Add(metric);
             }
             else
             {
-                metric.AreaCode = normalizedArea;
-                metric.KpiValue = dto.KpiValue;
-                metric.Month = dto.Month;
-                metric.Year = dto.Year;
+                metric!.KpiValue = dto.KpiValue;
+                metric.UpdatedAt = DateTime.UtcNow;
             }
 
             await _db.SaveChangesAsync();
@@ -231,7 +233,8 @@ namespace backend.Controllers
                 area = metric.AreaCode,
                 kpi_value = metric.KpiValue,
                 month = metric.Month,
-                year = metric.Year
+                year = metric.Year,
+                isNew
             });
         }
 

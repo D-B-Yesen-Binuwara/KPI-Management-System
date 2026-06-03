@@ -631,10 +631,13 @@ namespace backend.Data
 
                 entity.Property(x => x.Id).HasColumnName("Id").ValueGeneratedOnAdd();
                 entity.Property(x => x.EnterpriseKpiId).HasColumnName("EnterpriseKpiId").IsRequired();
+                entity.Property(x => x.KpiName).HasColumnName("KpiName").HasMaxLength(255).IsRequired();
                 entity.Property(x => x.AreaCode).HasColumnName("area_code").HasMaxLength(50).IsRequired();
                 entity.Property(x => x.KpiValue).HasColumnName("kpi_value").HasColumnType("decimal(18,4)");
                 entity.Property(x => x.Month).HasColumnName("month");
                 entity.Property(x => x.Year).HasColumnName("year");
+                entity.Property(x => x.CreatedAt).HasColumnName("CreatedAt");
+                entity.Property(x => x.UpdatedAt).HasColumnName("UpdatedAt");
 
                 entity.HasOne(x => x.EnterpriseKpi)
                       .WithMany()
@@ -642,7 +645,7 @@ namespace backend.Data
                       .HasConstraintName("FK_EnterpriseKpiMetrics_EnterpriseKpi")
                       .OnDelete(DeleteBehavior.Cascade);
 
-                entity.HasIndex(x => new { x.EnterpriseKpiId, x.AreaCode, x.Month, x.Year })
+                entity.HasIndex(x => new { x.AreaCode, x.KpiName, x.Month, x.Year })
                       .IsUnique()
                       .HasDatabaseName("UQ_EnterpriseKpiMetrics_Row");
             });

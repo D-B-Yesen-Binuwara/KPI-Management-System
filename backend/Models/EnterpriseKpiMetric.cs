@@ -18,6 +18,10 @@ namespace backend.Models
         public int EnterpriseKpiId { get; set; }
 
         [Required]
+        [MaxLength(255)]
+        public string KpiName { get; set; } = string.Empty;
+
+        [Required]
         public string AreaCode { get; set; } = null!;
 
         public decimal? KpiValue { get; set; }
@@ -25,6 +29,10 @@ namespace backend.Models
         public byte Month { get; set; }
 
         public short Year { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
 
         [ForeignKey(nameof(EnterpriseKpiId))]
         public EnterpriseKpi? EnterpriseKpi { get; set; }
