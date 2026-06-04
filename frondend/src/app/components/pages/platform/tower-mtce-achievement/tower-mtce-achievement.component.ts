@@ -51,7 +51,7 @@ export class TowerMtceAchievementComponent implements OnInit {
   private readonly http = inject(HttpClient);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  pageTitle = 'Tower Maintenance';
+  pageTitle = 'Other Operator';
   heroSubtitle = 'Quarterly tower maintenance achievement across NW regions.';
 
   headers = [...TOWER_COLUMNS];
