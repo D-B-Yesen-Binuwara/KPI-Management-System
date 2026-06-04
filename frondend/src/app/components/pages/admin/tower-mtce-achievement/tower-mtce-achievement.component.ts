@@ -35,7 +35,7 @@ interface TowerKpi {
   styleUrls: ['./tower-mtce-achievement.component.scss']
 })
 export class TowerMtceAchievementComponent implements OnInit {
-  pageTitle = 'Tower Maintenance Achievement';
+  pageTitle = 'Other Operator';
   records: TowerKpi[] = [];
 
   form!: FormGroup;
