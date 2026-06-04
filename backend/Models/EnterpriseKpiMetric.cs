@@ -34,6 +34,10 @@ namespace backend.Models
 
         public short Year { get; set; }
 
+        public DateTime CreatedAt { get; set; }
+
+        public DateTime? UpdatedAt { get; set; }
+
         [ForeignKey(nameof(EnterpriseKpiId))]
         public EnterpriseKpi? EnterpriseKpi { get; set; }
     }

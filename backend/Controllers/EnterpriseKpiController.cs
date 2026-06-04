@@ -205,7 +205,8 @@ namespace backend.Controllers
 
             var metric = metricCandidates.FirstOrDefault(x => NormalizeSite(x.Site) == normalizedSite);
 
-            if (metric == null)
+            bool isNew = metric == null;
+            if (isNew)
             {
                 metric = new EnterpriseKpiMetric
                 {
@@ -213,9 +214,9 @@ namespace backend.Controllers
                     Site = normalizedSite,
                     KpiValue = dto.KpiValue,
                     Month = dto.Month,
-                    Year = dto.Year
+                    Year = dto.Year,
+                    CreatedAt = DateTime.UtcNow
                 };
-
                 _db.EnterpriseKpiMetrics.Add(metric);
             }
             else
@@ -238,7 +239,8 @@ namespace backend.Controllers
                 site = metric.Site,
                 kpi_value = metric.KpiValue,
                 month = metric.Month,
-                year = metric.Year
+                year = metric.Year,
+                isNew
             });
         }
 

@@ -635,6 +635,8 @@ namespace backend.Data
                 entity.Property(x => x.KpiValue).HasColumnName("kpi_value").HasColumnType("decimal(18,4)");
                 entity.Property(x => x.Month).HasColumnName("month");
                 entity.Property(x => x.Year).HasColumnName("year");
+                entity.Property(x => x.CreatedAt).HasColumnName("CreatedAt");
+                entity.Property(x => x.UpdatedAt).HasColumnName("UpdatedAt");
 
                 entity.HasOne(x => x.EnterpriseKpi)
                       .WithMany()

@@ -871,21 +871,35 @@ namespace backend.Migrations
                         .HasColumnType("int")
                         .HasColumnName("EnterpriseKpiId");
 
-                    b.Property<byte>("Month")
-                        .HasColumnType("tinyint")
-                        .HasColumnName("month");
+                    b.Property<string>("KpiName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("KpiName");
 
                     b.Property<decimal?>("KpiValue")
                         .HasColumnType("decimal(18,4)")
                         .HasColumnName("kpi_value");
 
+                    b.Property<byte>("Month")
+                        .HasColumnType("tinyint")
+                        .HasColumnName("month");
+
                     b.Property<short>("Year")
                         .HasColumnType("smallint")
                         .HasColumnName("year");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("CreatedAt");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("UpdatedAt");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("EnterpriseKpiId", "AreaCode", "Month", "Year")
+                    b.HasIndex("AreaCode", "KpiName", "Month", "Year")
                         .IsUnique()
                         .HasDatabaseName("UQ_EnterpriseKpiMetrics_Row");
 
