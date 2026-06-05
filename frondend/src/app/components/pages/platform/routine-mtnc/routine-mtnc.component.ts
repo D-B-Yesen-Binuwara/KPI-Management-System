@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule, HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import * as ExcelJS from 'exceljs';
 import { forkJoin, of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
@@ -76,7 +77,7 @@ type ApiResponse = {
 @Component({
   selector: 'app-routine-mtnc',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule, HttpClientModule, FormsModule],
   templateUrl: './routine-mtnc.component.html',
   styleUrls: ['./routine-mtnc.component.scss']
 })
@@ -120,10 +121,61 @@ export class RoutineMtncComponent implements OnInit {
     slbn: {}
   };
 
-  readonly currentMonth = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date());
+  /* ===================== FILTER STATE ===================== */
+
+  private readonly now = new Date();
+
+  selectedMonth: number = this.now.getMonth() + 1;   // 1-indexed (1 = January)
+  selectedYear: number  = this.now.getFullYear();
+
+  readonly monthOptions: { value: number; label: string }[] = [
+    { value:  1, label: 'January'   },
+    { value:  2, label: 'February'  },
+    { value:  3, label: 'March'     },
+    { value:  4, label: 'April'     },
+    { value:  5, label: 'May'       },
+    { value:  6, label: 'June'      },
+    { value:  7, label: 'July'      },
+    { value:  8, label: 'August'    },
+    { value:  9, label: 'September' },
+    { value: 10, label: 'October'   },
+    { value: 11, label: 'November'  },
+    { value: 12, label: 'December'  }
+  ];
+
+  yearOptions: number[] = [
+    this.now.getFullYear(),
+    this.now.getFullYear() - 1,
+    this.now.getFullYear() - 2
+  ];
+
+  /* -------------------- */
 
   ngOnInit(): void {
     this.fetchData();
+  }
+
+  /* ===================== FILTER HANDLERS ===================== */
+
+  onMonthChange(month: number): void {
+    this.selectedMonth = Number(month);
+    this.applyFiltersAndRecalculate();
+  }
+
+  onYearChange(year: number): void {
+    this.selectedYear = Number(year);
+    this.applyFiltersAndRecalculate();
+  }
+
+  private applyFiltersAndRecalculate(): void {
+    (['msan', 'vpn', 'slbn'] as PlatformKey[]).forEach(key => {
+      this.placeholderMap[key] = this.calculatePlaceholderValues(this.platformDataMap[key], key);
+      const cfg = this.platformConfigs.find(c => c.key === key);
+      this.towerSumsMap[key] = cfg
+        ? this.calculateTowerSums(this.platformDataMap[key], cfg.monthsLimit)
+        : {};
+    });
+    this.cdr.detectChanges();
   }
 
   /* ================= GETTERS ================= */
@@ -327,17 +379,21 @@ export class RoutineMtncComponent implements OnInit {
   }
 
   private getTargetMonths(platform: PlatformKey): string[] {
+    // Use numeric selectedMonth (1-indexed) to determine the period window
+    const monthLabel = this.monthOptions.find(m => m.value === this.selectedMonth)?.label ?? '';
+
     if (platform === 'msan') {
-      if (this.currentMonth === 'June') return MONTH_NAMES.slice(0, 6);
-      if (this.currentMonth === 'December') return MONTH_NAMES.slice(5);
+      if (this.selectedMonth === 6)  return MONTH_NAMES.slice(0, 6);   // Jan–Jun
+      if (this.selectedMonth === 12) return MONTH_NAMES.slice(6);      // Jul–Dec
       return [];
     }
 
-    const valid = ['February', 'April', 'June', 'August', 'October', 'December'];
-    if (!valid.includes(this.currentMonth)) return [];
+    // VPN and SLBN: bi-monthly cadence (even months)
+    const validMonths = [2, 4, 6, 8, 10, 12];
+    if (!validMonths.includes(this.selectedMonth)) return [];
 
-    const idx = MONTH_NAMES.indexOf(this.currentMonth);
-    return [MONTH_NAMES[idx - 1], this.currentMonth];
+    const idx = MONTH_NAMES.indexOf(monthLabel);
+    return [MONTH_NAMES[idx - 1], monthLabel];
   }
 
   private setError(msg: string): void {
