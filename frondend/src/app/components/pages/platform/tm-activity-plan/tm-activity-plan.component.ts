@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import * as ExcelJS from 'exceljs';
 import { of } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
@@ -353,7 +354,7 @@ const TABLE_TITLES = [
 @Component({
   selector: 'app-tm-activity-plan',
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule, HttpClientModule, FormsModule],
   templateUrl: './tm-activity-plan.component.html',
   styleUrls: ['./tm-activity-plan.component.scss']
 })
@@ -371,6 +372,53 @@ export class TmActivityPlanComponent implements OnInit {
   loading = false;
   errorMessage = '';
   readonly tableTitles = TABLE_TITLES;
+
+  /* ===================== FILTER STATE ===================== */
+
+  private readonly now = new Date();
+
+  selectedMonth: number = this.now.getMonth() + 1;   // 1-indexed (1 = January)
+  selectedYear: number  = this.now.getFullYear();
+
+  readonly monthOptions: { value: number; label: string }[] = [
+    { value:  1, label: 'January'   },
+    { value:  2, label: 'February'  },
+    { value:  3, label: 'March'     },
+    { value:  4, label: 'April'     },
+    { value:  5, label: 'May'       },
+    { value:  6, label: 'June'      },
+    { value:  7, label: 'July'      },
+    { value:  8, label: 'August'    },
+    { value:  9, label: 'September' },
+    { value: 10, label: 'October'   },
+    { value: 11, label: 'November'  },
+    { value: 12, label: 'December'  }
+  ];
+
+  yearOptions: number[] = [
+    this.now.getFullYear(),
+    this.now.getFullYear() - 1,
+    this.now.getFullYear() - 2
+  ];
+
+  /* ===================== FILTER HANDLERS ===================== */
+
+  onMonthChange(month: number): void {
+    this.selectedMonth = Number(month);
+    this.applyFilters();
+  }
+
+  onYearChange(year: number): void {
+    this.selectedYear = Number(year);
+    this.applyFilters();
+  }
+
+  private applyFilters(): void {
+    this.calculatedValues = this.calculateFirstTableValues(this.tableData, this.headers);
+    this.cdr.detectChanges();
+  }
+
+  /* ------------------------------------------------- */
 
   ngOnInit(): void {
     this.processDerivedData(this.tableData);
@@ -585,21 +633,25 @@ export class TmActivityPlanComponent implements OnInit {
       return [];
     }
 
-    const currentMonth = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date());
-    const specialMonths = ['March', 'June', 'September', 'December'];
-    let selectedMonths: string[] | undefined;
+    // Derive quarter months from the selected filter month
+    const quarterEndByMonth: Record<number, string> = {
+      1: 'March', 2: 'March', 3: 'March',
+      4: 'June',  5: 'June',  6: 'June',
+      7: 'September', 8: 'September', 9: 'September',
+      10: 'December', 11: 'December', 12: 'December'
+    };
 
-    if (currentMonth === 'March') {
-      selectedMonths = ['January', 'February', 'March'];
-    } else if (currentMonth === 'June') {
-      selectedMonths = ['April', 'May', 'June'];
-    } else if (currentMonth === 'September') {
-      selectedMonths = ['July', 'August', 'September'];
-    } else if (currentMonth === 'December') {
-      selectedMonths = ['October', 'November', 'December'];
-    }
+    const quarterEnd = quarterEndByMonth[this.selectedMonth];
 
-    if (!specialMonths.includes(currentMonth)) {
+    const quarters: Record<string, string[]> = {
+      March:     ['January', 'February', 'March'],
+      June:      ['April', 'May', 'June'],
+      September: ['July', 'August', 'September'],
+      December:  ['October', 'November', 'December']
+    };
+
+    const selectedMonths = quarters[quarterEnd];
+    if (!selectedMonths) {
       return headers.map(() => '100.00');
     }
 
@@ -608,7 +660,7 @@ export class TmActivityPlanComponent implements OnInit {
       let totalDistribution = 0;
 
       data.forEach(monthEntry => {
-        if (selectedMonths?.includes(monthEntry.month)) {
+        if (selectedMonths.includes(monthEntry.month)) {
           const detail = monthEntry.details.find(item => item.Column1 === header);
           if (detail) {
             totalAchievement += Number(detail.Column3) || 0;
