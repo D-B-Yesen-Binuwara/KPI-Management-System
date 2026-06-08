@@ -1,4 +1,4 @@
-﻿using backend.Models;
+using backend.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Data
@@ -204,13 +204,8 @@ namespace backend.Data
                 entity.Property(x => x.Kpi).HasColumnName("kpi");
                 entity.Property(x => x.Target).HasColumnName("target");
                 entity.Property(x => x.Calculation).HasColumnName("calculation");
-                entity.Property(x => x.Platform).HasColumnName("platform");
-                entity.Property(x => x.ResponsibleDGM).HasColumnName("responsibleDGM");
-                entity.Property(x => x.DefinedOLADetails).HasColumnName("definedOLADetails");
-                entity.Property(x => x.DataSources).HasColumnName("dataSources");
                 entity.Property(x => x.CreatedAt).HasColumnName("createdAt");
                 entity.Property(x => x.UpdatedAt).HasColumnName("updatedAt");
-                entity.Property(x => x.V).HasColumnName("v");
             });
 
             // KPI TOWER
