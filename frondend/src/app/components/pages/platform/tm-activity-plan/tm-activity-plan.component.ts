@@ -25,10 +25,6 @@ type HardcodedRecord = {
   kpi: string;
   target: string;
   calculation: string;
-  platform: string;
-  responsibleDGM: string;
-  definedOLADetails: string;
-  dataSources: string;
 };
 
 type TowerSums = Partial<Record<string, number>>;
@@ -332,31 +328,19 @@ const MOCK_HARDCODED_DATA: HardcodedRecord[] = [
     no: 1,
     kpi: 'Proper maintaining and cleaning of tower sites',
     target: '100% adherence',
-    calculation: 'Completed visits / Planned visits',
-    platform: 'Tower Maintenance',
-    responsibleDGM: 'DGM - TM',
-    definedOLADetails: 'Visits completed within 30 days',
-    dataSources: 'FieldOps Tracker'
+    calculation: 'Completed visits / Planned visits'
   },
   {
     no: 2,
     kpi: 'Visual inspection of aviation lighting systems',
     target: '95% compliance',
-    calculation: 'Sites with compliant lighting / Total inspected',
-    platform: 'Tower Maintenance',
-    responsibleDGM: 'DGM - O&M',
-    definedOLADetails: 'Inspection cycle 14 days',
-    dataSources: 'Inspection Mobile App'
+    calculation: 'Sites with compliant lighting / Total inspected'
   },
   {
     no: 3,
     kpi: 'Earthing resistance measurement',
     target: '< 2 Ohms',
-    calculation: 'Sites within threshold / Total measured',
-    platform: 'Tower Maintenance',
-    responsibleDGM: 'DGM - Infra Reliability',
-    definedOLADetails: 'Quarterly measurement schedule',
-    dataSources: 'Power & Infra Tracker'
+    calculation: 'Sites within threshold / Total measured'
   }
 ];
 
@@ -442,11 +426,7 @@ export class TmActivityPlanComponent implements OnInit {
             no: typeof activity.no === 'string' ? parseInt(activity.no) : activity.no,
             kpi: activity.kpi,
             target: activity.target,
-            calculation: activity.calculation,
-            platform: activity.platform,
-            responsibleDGM: activity.responsibleDGM,
-            definedOLADetails: activity.definedOLADetails,
-            dataSources: activity.dataSources
+            calculation: activity.calculation
           }))
         : [...MOCK_HARDCODED_DATA];
       this.processDerivedData(this.tableData);
@@ -465,11 +445,7 @@ export class TmActivityPlanComponent implements OnInit {
       'No',
       'KPI',
       'Target',
-      'Calculation',
-      'Platform',
-      'Responsible DGM',
-      'Defined OLA Details',
-      'Data Sources'
+      'Calculation'
     ];
     const totalColumnsFirstTable = baseColumns.length + this.headers.length;
 
@@ -489,10 +465,6 @@ export class TmActivityPlanComponent implements OnInit {
         record.kpi ?? '-',
         record.target ?? '-',
         record.calculation ?? '-',
-        record.platform ?? '-',
-        record.responsibleDGM ?? '-',
-        record.definedOLADetails ?? '-',
-        record.dataSources ?? '-',
         ...this.calculatedValues.map(v => `${v}%`)
       ]);
       this.addBorder(row);

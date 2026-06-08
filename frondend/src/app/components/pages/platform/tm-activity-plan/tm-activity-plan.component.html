@@ -35,10 +35,6 @@
                   <th>KPI</th>
                   <th>Target</th>
                   <th>Calculation</th>
-                  <th>Platform</th>
-                  <th>Responsible DGM</th>
-                  <th>Defined OLA Details</th>
-                  <th>Data Sources</th>
                   <th *ngFor="let header of headers; trackBy: trackByHeader">{{ header }}</th>
                 </tr>
               </thead>
@@ -48,10 +44,6 @@
                   <td>{{ row.kpi || '-' }}</td>
                   <td>{{ row.target || '-' }}</td>
                   <td>{{ row.calculation || '-' }}</td>
-                  <td>{{ row.platform || '-' }}</td>
-                  <td>{{ row.responsibleDGM || '-' }}</td>
-                  <td>{{ row.definedOLADetails || '-' }}</td>
-                  <td>{{ row.dataSources || '-' }}</td>
                   <td *ngFor="let value of calculatedValues">
                     {{ value || '0.00' }}%
                   </td>
