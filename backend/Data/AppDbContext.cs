@@ -700,14 +700,9 @@ namespace backend.Data
                 entity.Property(x => x.Id).HasColumnName("Id").ValueGeneratedOnAdd();
                 entity.Property(x => x.OtherOperatorKpiId).HasColumnName("OtherOperatorKpiId").IsRequired();
                 entity.Property(x => x.Site).HasColumnName("Site").HasMaxLength(100);
-                entity.Property(x => x.TotalFaults).HasColumnName("TotalFaults");
-                entity.Property(x => x.FaultsWithinSla).HasColumnName("FaultsWithinSla");
-                entity.Property(x => x.RepeatedFaults).HasColumnName("RepeatedFaults");
-                entity.Property(x => x.TotalCustomers).HasColumnName("TotalCustomers");
-                entity.Property(x => x.TotalClearanceFaults).HasColumnName("TotalClearanceFaults");
-                entity.Property(x => x.ClearedWithin4Hrs).HasColumnName("ClearedWithin4Hrs");
                 entity.Property(x => x.Year).HasColumnName("Year");
                 entity.Property(x => x.Month).HasColumnName("Month");
+                entity.Property(x => x.KpiValue).HasColumnName("kpi_value").HasColumnType("decimal(18,4)");
 
                 entity.HasOne(x => x.OtherOperatorKpi)
                       .WithMany()
