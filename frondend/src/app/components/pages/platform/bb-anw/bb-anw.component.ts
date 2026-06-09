@@ -788,10 +788,13 @@ export class BbAnwComponent implements OnInit, OnDestroy {
 
 			(next as any)[parentKey][childKey] = newValue;
 
+			// ensure node meta reflects the current edited period so the DTO sends correct month/year
+			(next as any).nodeMeta = { ...(next as any).nodeMeta };
+			(next as any).nodeMeta[childKey] = { month: this.selectedMonth, year: this.selectedYear };
+
 			if (parentKey === 'totalNodes') {
 				const nodes = Number(newValue) || 0;
-				const meta = this.ensureNodeMeta(next, childKey);
-				const days = this.getDaysInMonth(meta.month, meta.year);
+				const days = this.getDaysInMonth(this.selectedMonth, this.selectedYear);
 				const computed = 24 * 60 * days * nodes;
 				next.totalMinutes = {
 					...(next.totalMinutes || {}),
@@ -822,12 +825,15 @@ export class BbAnwComponent implements OnInit, OnDestroy {
 				nodeMeta: { ...entry.nodeMeta },
 			};
 
-			const meta = this.ensureNodeMeta(next, childKey);
 			(next as any)[parentKey][childKey] = this.toNullableNumber(newValue);
+
+			// also force nodeMeta on the canonical allEntries copy
+			(next as any).nodeMeta = { ...(next as any).nodeMeta };
+			(next as any).nodeMeta[childKey] = { month: this.selectedMonth, year: this.selectedYear };
 
 			if (parentKey === 'totalNodes') {
 				const nodes = Number(newValue) || 0;
-				const days = this.getDaysInMonth(meta.month, meta.year);
+				const days = this.getDaysInMonth(this.selectedMonth, this.selectedYear);
 				next.totalMinutes = {
 					...next.totalMinutes,
 					[childKey]: 24 * 60 * days * nodes,
