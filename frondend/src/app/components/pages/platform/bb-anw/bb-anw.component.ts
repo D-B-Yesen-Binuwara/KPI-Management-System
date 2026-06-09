@@ -723,6 +723,8 @@ export class BbAnwComponent implements OnInit, OnDestroy {
 	}
 
 	startEdit(entry: BbAnwEntry, key: MetricKey): void {
+		// disallow editing of computed-only metric `totalMinutes`
+		if (key === 'totalMinutes') return;
 		if (!this.isEditingAllowed || !this.selectedKey || this.cellSaving) return;
 
 		const nestedKey = `${key}.${this.selectedKey}`;
@@ -783,6 +785,8 @@ export class BbAnwComponent implements OnInit, OnDestroy {
 		childKey: string,
 		newValue: string
 	): BbAnwEntry | null {
+		// prevent updates to computed-only metric
+		if (parentKey === 'totalMinutes') return null;
 		let filteredEntry: BbAnwEntry | null = null;
 
 		this.data = this.data.map((entry) => {
