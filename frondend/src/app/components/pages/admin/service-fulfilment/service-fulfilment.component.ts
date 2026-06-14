@@ -31,11 +31,6 @@ export class AdminServiceFulfilmentComponent implements OnInit {
   // Header
   pageTitle = 'Service Fulfilment KPIs';
 
-  // Dashboard stats
-  activeKpis = 0;
-  targetsMet = 0;
-  avgWeightage = 0;
-  dgmCount = 0;
 
   // Form
   kpiForm!: FormGroup;
@@ -82,10 +77,6 @@ export class AdminServiceFulfilmentComponent implements OnInit {
           ...kpi,
           displayOrder: kpi.displayOrder ?? index + 1
         }));
-        this.activeKpis = data.length;
-        const totalWeight = data.reduce((sum, k) => sum + (k.weightage ?? 0), 0);
-        this.avgWeightage = data.length ? Number((totalWeight / data.length).toFixed(1)) : 0;
-        this.dgmCount = new Set(data.map(k => k.responsibleDgm)).size;
         this.loading = false;
         this.cdr.detectChanges();
       },
