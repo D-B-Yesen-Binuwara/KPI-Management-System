@@ -1,4 +1,4 @@
-﻿using backend.Models;
+using backend.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Data
@@ -42,6 +42,7 @@ namespace backend.Data
         public DbSet<TowerMtcData> TowerMtcData { get; set; } = null!;
         public DbSet<SlbnMtcData> SlbnMtcData { get; set; } = null!;
         public DbSet<IpnwMtcData> IpnwMtcData { get; set; } = null!;
+        
 
         // =========================
         // KPI DEFINITIONS
@@ -89,6 +90,9 @@ namespace backend.Data
         public DbSet<OtherOperatorKpiMetric> OtherOperatorKpiMetrics { get; set; } = null!;
         public DbSet<OtherKpi> OtherKpis { get; set; } = null!;
         public DbSet<OtherKpiMetric> OtherKpiMetrics { get; set; } = null!;
+      // TELEMETRY / POWER & AC
+      public DbSet<Telemetry> Telemetry { get; set; } = null!;
+      public DbSet<PowerAndAC> PowerAndAC { get; set; } = null!;
 
         // =========================
         // AGED NETWORK FAILURE METRICS
@@ -204,13 +208,8 @@ namespace backend.Data
                 entity.Property(x => x.Kpi).HasColumnName("kpi");
                 entity.Property(x => x.Target).HasColumnName("target");
                 entity.Property(x => x.Calculation).HasColumnName("calculation");
-                entity.Property(x => x.Platform).HasColumnName("platform");
-                entity.Property(x => x.ResponsibleDGM).HasColumnName("responsibleDGM");
-                entity.Property(x => x.DefinedOLADetails).HasColumnName("definedOLADetails");
-                entity.Property(x => x.DataSources).HasColumnName("dataSources");
                 entity.Property(x => x.CreatedAt).HasColumnName("createdAt");
                 entity.Property(x => x.UpdatedAt).HasColumnName("updatedAt");
-                entity.Property(x => x.V).HasColumnName("v");
             });
 
             // KPI TOWER
@@ -631,8 +630,8 @@ namespace backend.Data
 
                 entity.Property(x => x.Id).HasColumnName("Id").ValueGeneratedOnAdd();
                 entity.Property(x => x.EnterpriseKpiId).HasColumnName("EnterpriseKpiId").IsRequired();
-                entity.Property(x => x.Site).HasColumnName("area_code").HasMaxLength(50).IsRequired();
-                entity.Property(x => x.KpiValue).HasColumnName("kpi_value").HasColumnType("decimal(18,4)");
+                entity.Property(x => x.Site).HasColumnName("Site").HasMaxLength(50).IsRequired();
+                entity.Property(x => x.KpiValue).HasColumnName("KpiValue").HasColumnType("decimal(18,4)");
                 entity.Property(x => x.Month).HasColumnName("month");
                 entity.Property(x => x.Year).HasColumnName("year");
                 entity.Property(x => x.CreatedAt).HasColumnName("CreatedAt");
@@ -670,8 +669,8 @@ namespace backend.Data
 
                 entity.Property(x => x.Id).HasColumnName("Id").ValueGeneratedOnAdd();
                 entity.Property(x => x.OtherKpiId).HasColumnName("OtherKpiId").IsRequired();
-                entity.Property(x => x.AreaCode).HasColumnName("area_code").HasMaxLength(50).IsRequired();
-                entity.Property(x => x.KpiValue).HasColumnName("kpi_value").HasColumnType("decimal(18,4)");
+                entity.Property(x => x.AreaCode).HasColumnName("AreaCode").HasMaxLength(50).IsRequired();
+                entity.Property(x => x.KpiValue).HasColumnName("KpiValue").HasColumnType("decimal(18,4)");
                 entity.Property(x => x.Year).HasColumnName("year");
                 entity.Property(x => x.Month).HasColumnName("month");
                 entity.Property(x => x.CreatedAt).HasColumnName("createdAt");
@@ -705,14 +704,9 @@ namespace backend.Data
                 entity.Property(x => x.Id).HasColumnName("Id").ValueGeneratedOnAdd();
                 entity.Property(x => x.OtherOperatorKpiId).HasColumnName("OtherOperatorKpiId").IsRequired();
                 entity.Property(x => x.Site).HasColumnName("Site").HasMaxLength(100);
-                entity.Property(x => x.TotalFaults).HasColumnName("TotalFaults");
-                entity.Property(x => x.FaultsWithinSla).HasColumnName("FaultsWithinSla");
-                entity.Property(x => x.RepeatedFaults).HasColumnName("RepeatedFaults");
-                entity.Property(x => x.TotalCustomers).HasColumnName("TotalCustomers");
-                entity.Property(x => x.TotalClearanceFaults).HasColumnName("TotalClearanceFaults");
-                entity.Property(x => x.ClearedWithin4Hrs).HasColumnName("ClearedWithin4Hrs");
                 entity.Property(x => x.Year).HasColumnName("Year");
                 entity.Property(x => x.Month).HasColumnName("Month");
+                entity.Property(x => x.KpiValue).HasColumnName("kpi_value").HasColumnType("decimal(18,4)");
 
                 entity.HasOne(x => x.OtherOperatorKpi)
                       .WithMany()
@@ -730,17 +724,53 @@ namespace backend.Data
                 entity.HasKey(x => x.Id);
                 entity.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd();
                 entity.Property(x => x.AreaCode).HasColumnName("area_code").HasMaxLength(50).IsRequired();
-                entity.Property(x => x.PlatformType).HasColumnName("platform_type").HasMaxLength(20).IsRequired();
+
                 entity.Property(x => x.HasUnavailability).HasColumnName("has_unavailability");
                 entity.Property(x => x.Month).HasColumnName("month");
                 entity.Property(x => x.Year).HasColumnName("year");
                 entity.Property(x => x.CreatedAt).HasColumnName("created_at");
                 entity.Property(x => x.UpdatedAt).HasColumnName("updated_at");
 
-                entity.HasIndex(x => new { x.AreaCode, x.PlatformType, x.Month, x.Year })
+                entity.HasIndex(x => new { x.AreaCode, x.Month, x.Year })
                       .IsUnique()
                       .HasDatabaseName("UQ_AgedNetworkFailureMetrics_Row");
+
             });
+
+                  // TELEMETRY
+                  modelBuilder.Entity<Telemetry>(entity =>
+                  {
+                        entity.ToTable("Telemetry", "dbo");
+                        entity.HasKey(x => x.Id);
+                        entity.Property(x => x.Id).HasColumnName("Id").ValueGeneratedOnAdd();
+                        entity.Property(x => x.Designation).HasColumnName("Designation").HasMaxLength(100).IsRequired();
+                        entity.Property(x => x.Year).HasColumnName("Year");
+                        entity.Property(x => x.Month).HasColumnName("Month");
+                        entity.Property(x => x.Percentage).HasColumnName("Percentage").HasColumnType("decimal(5,2)");
+
+                        entity.HasIndex(x => new { x.Designation, x.Year, x.Month })
+                                .IsUnique()
+                                .HasDatabaseName("UQ_Telemetry_Designation_Year_Month");
+                  });
+
+                  // POWER AND AC
+                  modelBuilder.Entity<PowerAndAC>(entity =>
+                  {
+                        entity.ToTable("PowerAndAC", "dbo");
+                        entity.HasKey(x => x.Id);
+                        entity.Property(x => x.Id).HasColumnName("Id").ValueGeneratedOnAdd();
+                        entity.Property(x => x.Designation).HasColumnName("Designation").HasMaxLength(100).IsRequired();
+                        entity.Property(x => x.Year).HasColumnName("Year");
+                        entity.Property(x => x.Month).HasColumnName("Month");
+                        entity.Property(x => x.Scheduled).HasColumnName("Scheduled");
+                        entity.Property(x => x.Attended).HasColumnName("Attended");
+                        entity.Property(x => x.Cumulative_Sched).HasColumnName("Cumulative_Sched");
+                        entity.Property(x => x.Cumulative_Achieved).HasColumnName("Cumulative_Achieved");
+
+                        entity.HasIndex(x => new { x.Designation, x.Year, x.Month })
+                                .IsUnique()
+                                .HasDatabaseName("UQ_PowerAndAC_Designation_Year_Month");
+                  });
 
             base.OnModelCreating(modelBuilder);
         }

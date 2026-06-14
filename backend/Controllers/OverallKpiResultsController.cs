@@ -72,14 +72,13 @@ namespace backend.Controllers
         // Returns: List of newly calculated KPI results
         // =========================================================
         [HttpPost("calculate")]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<ActionResult<List<OverallKpiResultDto>>> Calculate(
             [FromQuery] int? month,
             [FromQuery] int? year)
         {
             var now = DateTime.UtcNow;
-            //byte m = (byte)(month ?? now.Month);
-            byte m = (byte)(month ?? 2);
+            byte m = (byte)(month ?? now.Month);
             short y = (short)(year ?? now.Year);
 
             var calculated = await CalculateAndPersistAsync(m, y);
@@ -139,7 +138,7 @@ namespace backend.Controllers
                 .Where(x => x.Month == month && x.Year == year)
                 .ToListAsync();
 
-            var otherMetrics = await _db.OtherKpiMetrics.AsNoTracking()
+            var otherMetrics = await _db.OtherOperatorKpiMetrics.AsNoTracking()
                 .Where(x => x.Month == month && x.Year == year)
                 .ToListAsync();
 
@@ -190,11 +189,11 @@ namespace backend.Controllers
                 .Where(x => x.Trim() != string.Empty)
                 .Select(x => x.Trim()));
 
-            // Normalize area codes
-            var normalizedAreas = allAreaCodes
-                .Select(a => NormalizeArea(a))
-                .Where(x => x != string.Empty)
-                .ToList();
+            // Normalize area codes, prioritizing RegionData if populated
+            var dbRegions = await _db.RegionData.AsNoTracking().ToListAsync();
+            var normalizedAreas = dbRegions.Any()
+                ? dbRegions.Select(x => NormalizeArea(x.LeaCode)).Where(x => x != string.Empty).Distinct().ToList()
+                : allAreaCodes.Select(a => NormalizeArea(a)).Where(x => x != string.Empty).Distinct().ToList();
 
             // =========================================================
             // STEP 4: VALIDATE DATA AVAILABILITY
@@ -237,7 +236,7 @@ namespace backend.Controllers
                 .Select(x => new NamedKpi("ent", x.Id, x.NetworkEngineerKpi ?? string.Empty))
                 .ToListAsync();
 
-            var otherKpis = await _db.OtherKpis.AsNoTracking()
+            var otherKpis = await _db.OtherOperatorKpis.AsNoTracking()
                 .Select(x => new NamedKpi("other", x.Id, x.NetworkEngineerKpi ?? string.Empty))
                 .ToListAsync();
 
@@ -253,7 +252,7 @@ namespace backend.Controllers
             var enterpriseTargets = await _db.EnterpriseKpis.AsNoTracking()
                 .ToDictionaryAsync(x => x.Id, x => x.KpiPercent ?? 0m);
 
-            var otherTargets = await _db.OtherKpis.AsNoTracking()
+            var otherTargets = await _db.OtherOperatorKpis.AsNoTracking()
                 .ToDictionaryAsync(x => x.Id, x => x.KpiPercent ?? 0m);
 
             var daysInMonth = DateTime.DaysInMonth(year, month);
@@ -270,7 +269,31 @@ namespace backend.Controllers
             // =========================================================
             foreach (var kpi in kpis)
             {
-                var matchedKpi = FindBestMatch(kpi.KeyPerformanceIndicators, allNamedKpis);
+                var sourceFilter = new List<string>();
+                var p = kpi.Perspectives?.Trim().ToUpperInvariant() ?? string.Empty;
+                var cat = kpi.Category?.Trim().ToUpperInvariant() ?? string.Empty;
+                if (p == "IP NW OP" || p.Contains("IP")) sourceFilter.Add("ip");
+                if (p == "BB ANW" || p.Contains("BB")) sourceFilter.Add("bb");
+                if (p == "OTN OP" || p.Contains("OTN")) { sourceFilter.Add("otn1"); sourceFilter.Add("otn2"); }
+                if (p == "SERVICE FULFILMENT" || p.Contains("FULFILMENT")) sourceFilter.Add("sf");
+                if (p == "ENTERPRISE KPI" || p.Contains("ENTERPRISE"))
+                {
+                    if (cat == "OTHER OPERATOR" || cat.Contains("OPERATOR"))
+                    {
+                        sourceFilter.Add("other");
+                    }
+                    else
+                    {
+                        sourceFilter.Add("ent");
+                    }
+                }
+                if (p == "OTHER OPERATOR KPI" || p == "OTHER OPERATOR" || p.Contains("OPERATOR")) sourceFilter.Add("other");
+
+                var candidates = sourceFilter.Any()
+                    ? allNamedKpis.Where(x => sourceFilter.Contains(x.Source)).ToList()
+                    : allNamedKpis;
+
+                var matchedKpi = FindBestMatch(kpi.KeyPerformanceIndicators, candidates);
                 // Special handling for Aged Network Failure KPIs
                 if (IsAgedNetworkFailureKpi(kpi.KeyPerformanceIndicators))
                 {
@@ -290,7 +313,7 @@ namespace backend.Controllers
                             KpiName = kpi.KeyPerformanceIndicators,
                             Platform = kpi.Perspectives,
                             AreaCode = area,
-                            TargetValue = targetValue,
+                            TargetValue = targetValue ?? 0m,
                             AchievedKpi = achieved,
                             MaximumPointsPerKpi = maxPoints,
                             PointsAchieved = pointsAchieved,
@@ -337,7 +360,7 @@ namespace backend.Controllers
                         KpiName = kpi.KeyPerformanceIndicators,
                         Platform = kpi.Perspectives,
                         AreaCode = area,
-                        TargetValue = targetValue,
+                        TargetValue = targetValue ?? 0m,
                         AchievedKpi = achieved,
                         MaximumPointsPerKpi = maxPoints,
                         PointsAchieved = pointsAchieved,
@@ -405,7 +428,7 @@ namespace backend.Controllers
             List<OtnOp2Metrics> otn2Metrics,
             List<ServiceFulfilmentKpiMetric> sfMetrics,
             List<EnterpriseKpiMetric> entMetrics,
-            List<OtherKpiMetric> otherMetrics,
+            List<OtherOperatorKpiMetric> otherMetrics,
             IReadOnlyDictionary<int, decimal> enterpriseTargets,
             IReadOnlyDictionary<int, decimal> otherTargets,
             int daysInMonth)
@@ -464,16 +487,13 @@ namespace backend.Controllers
 
             if (matchedKpi.Source == "ent")
             {
-                var target = enterpriseTargets.TryGetValue(matchedKpi.Id, out var targetValue) ? targetValue : 0m;
-
                 foreach (var row in entMetrics.Where(x => x.EnterpriseKpiId == matchedKpi.Id))
                 {
                     var area = NormalizeArea(row.AreaCode);
                     if (area == string.Empty) continue;
 
-                    var actual = row.KpiValue ?? 0m;
-                    var normalized = CalculateEnterpriseOrOtherNormalized(matchedKpi.Name, actual, target);
-                    result[area] = new AreaSnapshot(normalized * 100m, 0m, normalized);
+                    var achieved = Math.Round(Math.Clamp(row.KpiValue ?? 0m, 0m, 100m), 4);
+                    result[area] = new AreaSnapshot(achieved, 0m);
                 }
 
                 return result;
@@ -481,16 +501,13 @@ namespace backend.Controllers
 
             if (matchedKpi.Source == "other")
             {
-                var target = otherTargets.TryGetValue(matchedKpi.Id, out var targetValue) ? targetValue : 0m;
-
-                foreach (var row in otherMetrics.Where(x => x.OtherKpiId == matchedKpi.Id))
+                foreach (var row in otherMetrics.Where(x => x.OtherOperatorKpiId == matchedKpi.Id))
                 {
                     var area = NormalizeArea(row.Site);
                     if (area == string.Empty) continue;
 
-                    var actual = CalculateOtherMetricPercentage(row);
-                    var normalized = CalculateEnterpriseOrOtherNormalized(matchedKpi.Name, actual, target);
-                    result[area] = new AreaSnapshot(normalized * 100m, 0m, normalized);
+                    var achieved = Math.Round(Math.Clamp(row.KpiValue ?? 0m, 0m, 100m), 4);
+                    result[area] = new AreaSnapshot(achieved, 0m);
                 }
 
                 return result;
@@ -575,6 +592,14 @@ namespace backend.Controllers
         {
             if (normalizedArea == string.Empty || snapshots.Count == 0) return null;
             if (snapshots.TryGetValue(normalizedArea, out var exact)) return exact;
+
+            // Handle special mappings for combined metro areas (CEN/HK/MD)
+            if (normalizedArea == "hk" || normalizedArea == "cenmd")
+            {
+                if (snapshots.TryGetValue("cenhkmd", out var s1)) return s1;
+                if (snapshots.TryGetValue("cenhkmd1", out var s2)) return s2;
+                if (snapshots.TryGetValue("cenhk", out var s3)) return s3;
+            }
 
             var partial = snapshots
                 .Where(kv => kv.Key.Contains(normalizedArea) || normalizedArea.Contains(kv.Key))
@@ -665,7 +690,25 @@ namespace backend.Controllers
             => Regex.Replace(value ?? string.Empty, "[^A-Za-z0-9]+", " ").Trim().ToLowerInvariant();
 
         private static string NormalizeArea(string value)
-            => Regex.Replace(value ?? string.Empty, "[^A-Za-z0-9]+", "").ToLowerInvariant();
+        {
+            var normalized = Regex.Replace(value ?? string.Empty, "[^A-Za-z0-9]+", "").ToLowerInvariant();
+            if (normalized == "kpivalue") return string.Empty;
+
+            // Map metric area code variations/shorthands to standard normalized LEA codes
+            return normalized switch
+            {
+                "ndfrm" => "ndrm",
+                "ngivt" => "ngwt",
+                "debkymt" => "kymt",
+                "bddwmrg" => "bdbwmrg",
+                "keirn" => "kern",
+                "embmbmh" => "embhbmh",
+                "bcjrdkltc" => "bcapkltc",
+                "adipr" => "adpr",
+                "konix" => "konkx",
+                _ => normalized
+            };
+        }
 
         // =========================================================
         // TOKENIZATION FOR MATCHING
@@ -809,7 +852,7 @@ namespace backend.Controllers
                 .ToList();
 
             if (!areaMetrics.Any()) return 100m;
-            return areaMetrics.Any(x => x.HasUnavailability == 1) ? 0m : 100m;
+            return areaMetrics.Any(x => x.HasUnavailability) ? 0m : 100m;
         }
     }
 }

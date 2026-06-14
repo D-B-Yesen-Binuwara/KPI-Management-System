@@ -184,7 +184,7 @@
 									</td>
 								</tr>
 
-								<tr class="sub-row" *ngIf="showAreaMetrics && !isAgedFailureKpi(row.networkEngineerKpi)">
+								<tr class="sub-row" *ngIf="showAreaMetrics">
 									<td></td>
 									<td class="sub-label" colspan="4">Unavailable Minutes</td>
 									<td class="metric-value">
@@ -225,48 +225,16 @@
 										</ng-template>
 									</td>
 								</tr>
-								<tr class="sub-row" *ngIf="showAreaMetrics && !isAgedFailureKpi(row.networkEngineerKpi)">
+								<tr class="sub-row" *ngIf="showAreaMetrics">
 									<td></td>
 									<td class="sub-label" colspan="4">Total Minutes</td>
 									<td class="metric-value">
-										<ng-container *ngIf="isEditingAllowed; else viewTotalMinutes">
-											<ng-container
-												*ngIf="isEditingCell(row, 'totalMinutes'); else totalMinutesDisplay">
-												<div class="edit-box">
-													<input type="number" class="form-control form-control-sm"
-														[ngModelOptions]="{ standalone: true }"
-														[(ngModel)]="editCell.value" step="0.01" />
-													<div class="edit-actions">
-														<button type="button" class="table-button" (click)="doneEdit()"
-															[disabled]="cellSaving">
-															<span *ngIf="cellSaving"
-																class="spinner-border spinner-border-sm me-1"
-																role="status"></span>
-															{{ cellSaving ? 'Saving...' : 'Save' }}
-														</button>
-														<button type="button" class="table-button btn-secondary"
-															(click)="cancelEdit()" [disabled]="cellSaving">
-															Cancel
-														</button>
-													</div>
-												</div>
-											</ng-container>
-											<ng-template #totalMinutesDisplay>
-												<div class="cell-view">
-													<span>{{ getMetricDisplay(row, 'totalMinutes') }}</span>
-													<button type="button" class="table-button"
-														(click)="startEdit(row, 'totalMinutes')">
-														Edit
-													</button>
-												</div>
-											</ng-template>
-										</ng-container>
-										<ng-template #viewTotalMinutes>
-											{{ getMetricDisplay(row, 'totalMinutes') }}
-										</ng-template>
+										<div class="cell-view">
+											<span>{{ getMetricDisplay(row, 'totalMinutes') }}</span>
+										</div>
 									</td>
 								</tr>
-								<tr class="sub-row" *ngIf="showAreaMetrics && !isAgedFailureKpi(row.networkEngineerKpi)">
+								<tr class="sub-row" *ngIf="showAreaMetrics">
 									<td></td>
 									<td class="sub-label" colspan="4">Total Nodes</td>
 									<td class="metric-value">
@@ -308,32 +276,6 @@
 									</td>
 								</tr>
 
-								<!-- Has Unavailability row — only for Aged Network Failure KPIs -->
-								<tr class="sub-row" *ngIf="showAreaMetrics && isAgedFailureKpi(row.networkEngineerKpi)">
-									<td></td>
-									<td class="sub-label" colspan="4">Has Unavailability</td>
-									<td class="metric-value">
-										<ng-container *ngIf="isEditingAllowed; else viewAgedFailure">
-											<div class="d-flex align-items-center gap-2">
-												<select class="form-select form-select-sm"
-													[ngModel]="getAgedFailureValue(selectedKey)"
-													(ngModelChange)="setAgedFailureValue(selectedKey, +$event)"
-													[ngModelOptions]="{standalone: true}">
-													<option [value]="0">No Unavailability</option>
-													<option [value]="1">Has Unavailability</option>
-												</select>
-												<button type="button" class="table-button"
-													(click)="saveAgedFailure(selectedKey)"
-													[disabled]="agedFailureSaving">
-													{{ agedFailureSaving ? 'Saving...' : 'Save' }}
-												</button>
-											</div>
-										</ng-container>
-										<ng-template #viewAgedFailure>
-											{{ getAgedFailureValue(selectedKey) === 1 ? 'Has Unavailability' : 'No Unavailability' }}
-										</ng-template>
-									</td>
-								</tr>
 							</ng-container>
 						</tbody>
 					</table>
