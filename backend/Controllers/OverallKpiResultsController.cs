@@ -647,7 +647,7 @@ namespace backend.Controllers
             decimal um = unavailableMinutes ?? 0;
             decimal tn = totalNodes ?? 0;
 
-            var denominator = 24m * 60m * daysInMonth * tn;
+            var denominator = tm > 0m ? tm : (24m * 60m * daysInMonth * tn);
             if (denominator <= 0m) return 100m;
 
             var numerator = tm - um;
@@ -661,7 +661,7 @@ namespace backend.Controllers
             decimal um = unavailableMinutes ?? 0;
             decimal tn = totalNodes;
 
-            var denominator = 24m * 60m * daysInMonth * tn;
+            var denominator = tm > 0m ? tm : (24m * 60m * daysInMonth * tn);
             if (denominator <= 0m) return 100m;
 
             var numerator = tm - um;
