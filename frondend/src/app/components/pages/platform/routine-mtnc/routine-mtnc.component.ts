@@ -181,10 +181,21 @@ export class RoutineMtncComponent implements OnInit {
   /* ================= GETTERS ================= */
 
   get maintenanceRows(): MaintenanceRow[] {
-    return this.routineData.map((routine, index) => ({
-      routine,
-      platformKey: this.platformConfigs[index]?.key ?? null
-    }));
+    return this.routineData.map(routine => {
+      // Combine several fields to build a robust, case-insensitive matcher.
+      const combined = `${(routine.platform ?? '')} ${(routine.kpi ?? '')} ${(routine.dataSources ?? '')}`.toLowerCase();
+
+      let platformKey: PlatformKey | null = null;
+
+      // SLBN / BB&ANW variations -> slbn
+      if (/\bslbn\b|bb&?anw|\bslb\b/.test(combined)) platformKey = 'slbn';
+      // IPNW / VPN -> vpn
+      else if (/\bipnw\b|\bvpn\b/.test(combined)) platformKey = 'vpn';
+      // MSAN / OLTE / INT / NT variants -> msan
+      else if (/\bmsan\b|\bolte\b|\bmsan\/olte\b|\bint\b|\bnt\b/.test(combined)) platformKey = 'msan';
+
+      return { routine, platformKey };
+    });
   }
 
   get combinedTableColspan(): number {
@@ -334,24 +345,42 @@ export class RoutineMtncComponent implements OnInit {
     const months = this.getTargetMonths(platform);
     if (!months.length) return result;
 
-    // Cumulative values are running totals — use the LAST available month in the
-    // window, not a sum across months (summing would double-count).
-    const lastMonthEntry = months
+    const selectedMonthLabel = this.monthOptions.find(m => m.value === this.selectedMonth)?.label ?? '';
+
+    // Prefer the exact selected month entry; otherwise fall back to the latest
+    // available month in the window that is <= the selected month.
+    const exactEntry = data.find(d => d.month === selectedMonthLabel);
+    if (exactEntry) {
+      this.applyCumulativePercentage(result, exactEntry);
+      return result;
+    }
+
+    const selectedMonthIndex = this.selectedMonth - 1; // 0-based (Jan=0)
+
+    const fallbackEntry = months
       .slice()
       .reverse()
-      .map(m => data.find(d => d.month === m))
+      .map((m, idxFromWindowStart) => {
+        // months is ordered Jan..Dec, so its reverse() iteration provides a deterministic
+        // "latest available <= selected month" choice.
+        const monthIndex = MONTH_NAMES.indexOf(m); // month label -> index in MONTH_NAMES
+        return monthIndex <= selectedMonthIndex ? data.find(d => d.month === m) : undefined;
+      })
       .find(entry => entry !== undefined);
 
-    if (!lastMonthEntry) return result;
+    if (!fallbackEntry) return result;
 
+    this.applyCumulativePercentage(result, fallbackEntry);
+    return result;
+  }
+
+  private applyCumulativePercentage(result: PlaceholderMap, entry: PlatformRecord): void {
     PLATFORM_COLUMNS.forEach(column => {
-      const detail = lastMonthEntry.data?.[column];
-      const cumSched   = Number(detail?.column2) || 0;   // CumulativeSched
-      const cumAchieved = Number(detail?.column3) || 0;  // CumulativeAchieved
+      const detail = entry.data?.[column];
+      const cumSched = Number(detail?.column2) || 0; // CumulativeSched
+      const cumAchieved = Number(detail?.column3) || 0; // CumulativeAchieved
       result[column] = cumSched ? ((cumAchieved / cumSched) * 100).toFixed(2) : '0.00';
     });
-
-    return result;
   }
 
   private calculateTowerSums(data: PlatformRecord[], limit: number): TowerSumRecord {
@@ -368,19 +397,17 @@ export class RoutineMtncComponent implements OnInit {
   }
 
   private getTargetMonths(platform: PlatformKey): string[] {
-    // Use numeric selectedMonth (1-indexed) to determine the period window
-    const monthLabel = this.monthOptions.find(m => m.value === this.selectedMonth)?.label ?? '';
-
     if (platform === 'msan') {
-      if (this.selectedMonth === 6)  return MONTH_NAMES.slice(0, 6);   // Jan–Jun
-      if (this.selectedMonth === 12) return MONTH_NAMES.slice(6);      // Jul–Dec
-      return [];
+      // Use the half-year that contains the selected month
+      if (this.selectedMonth >= 1 && this.selectedMonth <= 6) return MONTH_NAMES.slice(0, 6);   // Jan–Jun
+      return MONTH_NAMES.slice(6);      // Jul–Dec (7..12)
     }
 
     // VPN and SLBN: bi-monthly cadence (even months)
     const validMonths = [2, 4, 6, 8, 10, 12];
     if (!validMonths.includes(this.selectedMonth)) return [];
 
+    const monthLabel = this.monthOptions.find(m => m.value === this.selectedMonth)?.label ?? '';
     const idx = MONTH_NAMES.indexOf(monthLabel);
     return [MONTH_NAMES[idx - 1], monthLabel];
   }
