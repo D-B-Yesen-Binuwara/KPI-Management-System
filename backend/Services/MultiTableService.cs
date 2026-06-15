@@ -44,7 +44,7 @@ namespace backend.Services
         public async Task<List<PlatformRecordDto>> FetchVpnDataAsync(int? year = null, int? month = null)
         {
             var rows = await _context.IpnwMtcData
-                .Where(x => year == null || x.Year == year)
+                .Where(x => year == null || x.Year == year.ToString())
                 .Select(x => new CumulativeRow
                 {
                     Designation = x.Designation,
