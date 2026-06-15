@@ -8,9 +8,6 @@ namespace backend.Models
 
         [Required, MaxLength(50)]
         public string AreaCode { get; set; } = string.Empty;
-
-
-
         public bool HasUnavailability { get; set; }
 
         public int Month { get; set; }
