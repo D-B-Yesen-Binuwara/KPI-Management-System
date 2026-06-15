@@ -863,7 +863,7 @@ namespace backend.Controllers
                 || normalized.Contains("fibrefailurerestoration(largescale");
         }
 
-        // Returns 100 - Percentage.
+        // Returns the percentage value directly.
         private static decimal CalculateAgedNetworkFailureKpi(
             List<AgedNetworkFailureMetric> metrics, string normalizedArea)
         {
@@ -871,8 +871,8 @@ namespace backend.Controllers
                 .Where(x => NormalizeArea(x.AreaCode) == normalizedArea)
                 .ToList();
 
-            if (!areaMetrics.Any()) return 100m;
-            return Math.Clamp(100m - areaMetrics.First().Percentage, 0m, 100m);
+            if (!areaMetrics.Any()) return 0m;
+            return Math.Clamp(areaMetrics.First().Percentage, 0m, 100m);
         }
     }
 }
