@@ -349,10 +349,11 @@ namespace backend.Controllers
                 if (kpi.KeyPerformanceIndicators.Equals("Routine Maintenance - SLBN/SDH", StringComparison.OrdinalIgnoreCase))
                 {
                     Console.WriteLine("ENTERED SLBN BLOCK");
-                    foreach (var area in normalizedAreas)
+                    foreach (var kv in slbnMap)
                     {
-                        var achieved = slbnMap.TryGetValue(area, out var pct) ? pct : 0m;
-                        var maxPoints = normalizedAreas.Count > 0 ? (decimal)kpi.PointsApplicable / normalizedAreas.Count : 0m;
+                        var area = kv.Key;
+                        var achieved = kv.Value;
+                        var maxPoints = slbnMap.Count > 0 ? (decimal)kpi.PointsApplicable / slbnMap.Count : 0m;
                         Console.WriteLine($"INSERTING {kpi.KeyPerformanceIndicators} Area={area} Achieved={achieved}");
                         results.Add(new OverallKpiResult
                         {
@@ -376,10 +377,11 @@ namespace backend.Controllers
                 if (kpi.KeyPerformanceIndicators.Equals("Routine Maintenance - MSAN/OLTE", StringComparison.OrdinalIgnoreCase))
                 {
                     Console.WriteLine("ENTERED MSAN BLOCK");
-                    foreach (var area in normalizedAreas)
+                    foreach (var kv in msanMap)
                     {
-                        var achieved = msanMap.TryGetValue(area, out var pct) ? pct : 0m;
-                        var maxPoints = normalizedAreas.Count > 0 ? (decimal)kpi.PointsApplicable / normalizedAreas.Count : 0m;
+                        var area = kv.Key;
+                        var achieved = kv.Value;
+                        var maxPoints = msanMap.Count > 0 ? (decimal)kpi.PointsApplicable / msanMap.Count : 0m;
                         Console.WriteLine($"INSERTING {kpi.KeyPerformanceIndicators} Area={area} Achieved={achieved}");
                         results.Add(new OverallKpiResult
                         {
@@ -403,10 +405,11 @@ namespace backend.Controllers
                 if (kpi.KeyPerformanceIndicators.Equals("Operation & Maintenance of SLT towers and tower premises", StringComparison.OrdinalIgnoreCase))
                 {
                     Console.WriteLine("ENTERED TOWER BLOCK");
-                    foreach (var area in normalizedAreas)
+                    foreach (var kv in towerMap)
                     {
-                        var achieved = towerMap.TryGetValue(area, out var pct) ? pct : 0m;
-                        var maxPoints = normalizedAreas.Count > 0 ? (decimal)kpi.PointsApplicable / normalizedAreas.Count : 0m;
+                        var area = kv.Key;
+                        var achieved = kv.Value;
+                        var maxPoints = towerMap.Count > 0 ? (decimal)kpi.PointsApplicable / towerMap.Count : 0m;
                         Console.WriteLine($"INSERTING {kpi.KeyPerformanceIndicators} Area={area} Achieved={achieved}");
                         results.Add(new OverallKpiResult
                         {
