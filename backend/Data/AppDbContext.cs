@@ -718,18 +718,17 @@ namespace backend.Data
             // =========================
             // AGED NETWORK FAILURE METRICS
             // =========================
-            modelBuilder.Entity<AgedNetworkFailureMetric>(entity =>
+             modelBuilder.Entity<AgedNetworkFailureMetric>(entity =>
             {
                 entity.ToTable("AgedNetworkFailureMetrics", "dbo");
                 entity.HasKey(x => x.Id);
                 entity.Property(x => x.Id).HasColumnName("id").ValueGeneratedOnAdd();
                 entity.Property(x => x.AreaCode).HasColumnName("area_code").HasMaxLength(50).IsRequired();
 
-                entity.Property(x => x.HasUnavailability).HasColumnName("has_unavailability");
+                entity.Property(x => x.Percentage).HasColumnName("percentage").HasColumnType("decimal(5,2)");
+                entity.Property(x => x.Remarks).HasColumnName("remarks").HasMaxLength(500);
                 entity.Property(x => x.Month).HasColumnName("month");
                 entity.Property(x => x.Year).HasColumnName("year");
-                entity.Property(x => x.CreatedAt).HasColumnName("created_at");
-                entity.Property(x => x.UpdatedAt).HasColumnName("updated_at");
 
                 entity.HasIndex(x => new { x.AreaCode, x.Month, x.Year })
                       .IsUnique()
