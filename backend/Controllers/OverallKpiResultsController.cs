@@ -863,7 +863,7 @@ namespace backend.Controllers
                 || normalized.Contains("fibrefailurerestoration(largescale");
         }
 
-        // Returns 0 if ANY platform record has has_unavailability = 1, else 100.
+        // Returns 100 - Percentage.
         private static decimal CalculateAgedNetworkFailureKpi(
             List<AgedNetworkFailureMetric> metrics, string normalizedArea)
         {
@@ -872,7 +872,7 @@ namespace backend.Controllers
                 .ToList();
 
             if (!areaMetrics.Any()) return 100m;
-            return areaMetrics.Any(x => x.HasUnavailability) ? 0m : 100m;
+            return Math.Clamp(100m - areaMetrics.First().Percentage, 0m, 100m);
         }
     }
 }
