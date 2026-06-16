@@ -239,6 +239,17 @@ export class OtherKpiComponent implements OnInit {
     });
   }
 
+  get pacDesignations(): string[] {
+    if (!this.pacRows) return [];
+    return Array.from(new Set(this.pacRows.map(r => r.designation))).sort();
+  }
+
+  getPacValue(designation: string, month: number, type: 'sched' | 'achieved'): string {
+    const record = this.pacRows.find(r => r.designation === designation && r.month === month);
+    if (!record) return '—';
+    return type === 'sched' ? String(record.cumulative_Sched) : String(record.cumulative_Achieved);
+  }
+
   getMonthLabel(month: number): string {
     return MONTH_OPTIONS.find(m => m.value === month)?.label?.substring(0, 3) ?? String(month);
   }
