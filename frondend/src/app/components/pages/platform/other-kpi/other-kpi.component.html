@@ -164,30 +164,29 @@
         </div>
 
         <div *ngIf="!pacLoading && !pacError" class="table-responsive">
-          <table class="table table-hover table-bordered mb-0 data-table">
+          <table class="table table-hover table-bordered mb-0 data-table text-nowrap">
             <thead class="table-dark">
               <tr>
-                <th>No.</th>
-                <th>Designation</th>
-                <th>Month</th>
-                <th>Scheduled</th>
-                <th>Attended</th>
-                <th>Cumulative Scheduled</th>
-                <th>Cumulative Achieved</th>
+                <th rowspan="2" class="align-middle text-center" style="min-width: 120px;">Month</th>
+                <th *ngFor="let desig of pacDesignations" colspan="2" class="text-center">{{ desig }}</th>
+              </tr>
+              <tr>
+                <ng-container *ngFor="let desig of pacDesignations">
+                  <th class="text-center">Cum. Sched</th>
+                  <th class="text-center">Cum. Achieved</th>
+                </ng-container>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let row of pacRows; let i = index">
-                <td class="text-center">{{ i + 1 }}</td>
-                <td>{{ row.designation }}</td>
-                <td class="text-center">{{ getMonthLabel(row.month) }}</td>
-                <td class="text-center">{{ row.scheduled }}</td>
-                <td class="text-center">{{ row.attended }}</td>
-                <td class="text-center">{{ row.cumulative_Sched }}</td>
-                <td class="text-center">{{ row.cumulative_Achieved }}</td>
+              <tr *ngFor="let m of monthOptions">
+                <td class="text-center fw-bold">{{ m.label }}</td>
+                <ng-container *ngFor="let desig of pacDesignations">
+                  <td class="text-center">{{ getPacValue(desig, m.value, 'sched') }}</td>
+                  <td class="text-center">{{ getPacValue(desig, m.value, 'achieved') }}</td>
+                </ng-container>
               </tr>
-              <tr *ngIf="!pacRows.length">
-                <td colspan="7" class="text-center py-5 text-muted">
+              <tr *ngIf="!pacDesignations.length">
+                <td [attr.colspan]="1" class="text-center py-5 text-muted">
                   <i class="bi bi-folder2-open d-block mb-2 fs-2"></i>
                   No Power &amp; AC data for {{ pacYear }}.
                 </td>
