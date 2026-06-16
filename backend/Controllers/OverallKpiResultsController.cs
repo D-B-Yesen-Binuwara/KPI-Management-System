@@ -434,10 +434,12 @@ namespace backend.Controllers
                             KpiName = kpi.KeyPerformanceIndicators,
                             Platform = kpi.Perspectives,
                             AreaCode = area,
-                            TargetValue = 100m,
+                            TargetValue = 95m,
                             AchievedKpi = achieved,
                             MaximumPointsPerKpi = maxPoints,
-                            PointsAchieved = CalculatePointsAchieved(maxPoints, achieved, 100m),
+                            PointsAchieved = achieved > 95m
+                                ? maxPoints
+                                : Math.Round((maxPoints * achieved) / 100m, 4),
                             Month = month,
                             Year = year,
                             CalculatedAt = nowUtc
