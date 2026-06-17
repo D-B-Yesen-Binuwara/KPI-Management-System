@@ -493,3 +493,59 @@
   color: #0b3d26;
   font-weight: 800;
 }
+
+/* Category Legend Styling */
+.legend-container {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 14px;
+  align-self: flex-start;
+  padding-left: 6px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.legend-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+}
+
+.assurance-dot {
+  background-color: #dbeafe;
+  border: 1.5px solid #0057a6;
+}
+
+.fulfillment-dot {
+  background-color: #dcfce7;
+  border: 1.5px solid #28a745;
+}
+
+/* Row Category Specific Background Colors (Service Assurance & Service Fulfillment) */
+.kpi-table tbody tr.category-assurance td,
+.final-distribution-table tbody tr.category-assurance td {
+  background-color: #dbeafe !important;
+}
+
+.kpi-table tbody tr.category-assurance:hover td,
+.final-distribution-table tbody tr.category-assurance:hover td {
+  background-color: #bfdbfe !important;
+}
+
+.kpi-table tbody tr.category-fulfillment td,
+.final-distribution-table tbody tr.category-fulfillment td {
+  background-color: #dcfce7 !important;
+}
+
+.kpi-table tbody tr.category-fulfillment:hover td,
+.final-distribution-table tbody tr.category-fulfillment:hover td {
+  background-color: #bbf7d0 !important;
+}
+
