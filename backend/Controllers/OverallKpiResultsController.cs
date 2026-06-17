@@ -997,11 +997,12 @@ namespace backend.Controllers
         {
             var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-            // Collect designations from maintenance tables
+            // Collect designations from maintenance and telemetry tables
             var designations = _db.MsanMtcData.Select(x => x.Designation)
                 .Concat(_db.IpnwMtcData.Select(x => x.Designation))
                 .Concat(_db.SlbnMtcData.Select(x => x.Designation))
                 .Concat(_db.TowerMtcData.Select(x => x.Designation))
+                .Concat(_db.Telemetry.Select(x => x.Designation))
                 .Where(x => x != null)
                 .Distinct()
                 .ToList();
@@ -1012,7 +1013,12 @@ namespace backend.Controllers
                 if (string.IsNullOrEmpty(designation))
                     continue;
 
-                var normalizedDesignation = NormalizeDesignation(designation);
+                // Remove name part from designation if present, e.g. "NW/WPC1(Manjula)" -> "NW/WPC1"
+                var baseDesignation = designation.Contains('(')
+                    ? designation[..designation.IndexOf('(')].Trim()
+                    : designation;
+
+                var normalizedDesignation = NormalizeDesignation(baseDesignation);
 
                 var region = dbRegions.FirstOrDefault(r =>
                 {
@@ -1034,7 +1040,7 @@ namespace backend.Controllers
                 }
                 else
                 {
-                    Console.WriteLine($"No RegionData match for designation [{designation}]");
+                    Console.WriteLine($"No RegionData match for designation [{designation}] (base: [{baseDesignation}])");
                 }
             }
 
