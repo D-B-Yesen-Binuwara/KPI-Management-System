@@ -149,9 +149,13 @@
   flex-direction: row;
   width: 100%;
   max-width: 100vw;
-  overflow: visible;
+  max-height: calc(100vh - 180px); /* Keeps the table scrollable and scrollbars visible */
+  overflow: auto; /* Enables synchronized vertical scrolling and horizontal scrolling */
   gap: 0;
   align-items: flex-start;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 /* LEFT TABLE: Sticky Logic */
@@ -159,7 +163,7 @@
   position: -webkit-sticky;
   position: sticky;
   left: 0;
-  z-index: 20;
+  z-index: 35;
   background-color: #ffffff;
   flex-shrink: 0;
   /* SLT blue shadow for subtle branding */
@@ -170,16 +174,30 @@
 /* RIGHT TABLE: Scrollable Logic */
 .final-table-container.scrollable-right {
   flex-grow: 1;
-  overflow-x: auto;
+  overflow: visible; /* Parent container handles vertical & horizontal scroll */
   min-width: 0;
-  background-color: #d4f036;
 }
 
 .final-distribution-table {
   min-width: 2500px;
   width: max-content;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   table-layout: fixed;
+}
+
+/* Sticky headers for both tables */
+.kpi-table thead,
+.final-distribution-table thead {
+  position: -webkit-sticky;
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+
+/* Left table header needs higher z-index to overlay horizontal scroll content */
+.kpi-table-container.sticky-left thead {
+  z-index: 40;
 }
 
 /* Hover effect */
@@ -203,7 +221,8 @@
 }
 
 .kpi-table {
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   table-layout: fixed;
 }
 
