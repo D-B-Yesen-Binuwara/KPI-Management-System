@@ -40,7 +40,7 @@ import { AuthService } from './services/auth.service';
 })
 export class App implements OnInit {
   /* Application title */
-  protected readonly title = signal('Network Key Performance Indicator (KPI)');
+  protected readonly title = signal('Network KPI Portal');
   /* Currently open dropdown menu */
   protected readonly openMenu = signal<string | null>(null);
   /* Logged-in user name */
