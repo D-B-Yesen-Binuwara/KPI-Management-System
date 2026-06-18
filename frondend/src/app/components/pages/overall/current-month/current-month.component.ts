@@ -90,6 +90,12 @@ type OverallKpiResultApi = {
 export class CurrentMonthComponent implements OnInit, AfterViewInit, OnDestroy {
   currentMonth: string;
   currentYear: number;
+  hoveredRowIndex: number | null = null;
+
+  setHoveredRowIndex(index: number | null): void {
+    this.hoveredRowIndex = index;
+    this.cdr.detectChanges();
+  }
 
   selectedMonth: number;
   selectedYear: number;

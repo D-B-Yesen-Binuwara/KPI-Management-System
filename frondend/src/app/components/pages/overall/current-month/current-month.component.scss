@@ -222,7 +222,6 @@
 }
 
 /* Hover effect */
-.final-distribution-table td:hover,
 .final-distribution-table th:hover {
   cursor: pointer;
   background-color: #85a9ff !important;
@@ -445,8 +444,8 @@
 .kpi-table tbody tr:nth-child(odd) td,
 .final-distribution-table tbody tr:nth-child(odd) td { background-color: #F1F6FF; }
 
-.kpi-table tbody tr:hover td,
-.final-distribution-table tbody tr:hover td {
+.kpi-table tbody tr.row-hovered td,
+.final-distribution-table tbody tr.row-hovered td {
   background-color: #F3FBFF; /* very light SLT blue highlight */
   transition: background-color 120ms ease-in-out;
 }
@@ -544,8 +543,8 @@
   background-color: #dbeafe !important;
 }
 
-.kpi-table tbody tr.category-assurance:hover td,
-.final-distribution-table tbody tr.category-assurance:hover td {
+.kpi-table tbody tr.category-assurance.row-hovered td,
+.final-distribution-table tbody tr.category-assurance.row-hovered td {
   background-color: #bfdbfe !important;
 }
 
@@ -554,8 +553,8 @@
   background-color: #dcfce7 !important;
 }
 
-.kpi-table tbody tr.category-fulfillment:hover td,
-.final-distribution-table tbody tr.category-fulfillment:hover td {
+.kpi-table tbody tr.category-fulfillment.row-hovered td,
+.final-distribution-table tbody tr.category-fulfillment.row-hovered td {
   background-color: #bbf7d0 !important;
 }
 
@@ -564,8 +563,8 @@
   background-color: #f3e8ff !important;
 }
 
-.kpi-table tbody tr.category-enterprise:hover td,
-.final-distribution-table tbody tr.category-enterprise:hover td {
+.kpi-table tbody tr.category-enterprise.row-hovered td,
+.final-distribution-table tbody tr.category-enterprise.row-hovered td {
   background-color: #e9d5ff !important;
 }
 
@@ -574,8 +573,8 @@
   background-color: #ffedd5 !important;
 }
 
-.kpi-table tbody tr.category-other-operator:hover td,
-.final-distribution-table tbody tr.category-other-operator:hover td {
+.kpi-table tbody tr.category-other-operator.row-hovered td,
+.final-distribution-table tbody tr.category-other-operator.row-hovered td {
   background-color: #fed7aa !important;
 }
 
