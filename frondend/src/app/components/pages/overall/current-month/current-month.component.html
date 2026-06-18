@@ -43,12 +43,16 @@
 
   <div class="legend-container" *ngIf="!loading && !(noDefinitions || noOverallResults)">
     <div class="legend-item">
-      <span class="legend-dot assurance-dot"></span>
-      <span class="legend-text">Service Assurance</span>
-    </div>
-    <div class="legend-item">
       <span class="legend-dot fulfillment-dot"></span>
       <span class="legend-text">Service Fulfillment</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-dot enterprise-dot"></span>
+      <span class="legend-text">Enterprise</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-dot other-operator-dot"></span>
+      <span class="legend-text">Other Operator</span>
     </div>
   </div>
 
@@ -75,7 +79,12 @@
         </thead>
 
         <tbody>
-          <tr *ngFor="let row of kpiRows" [ngClass]="getKpiRowClass(row)" #leftRowRef>
+          <tr *ngFor="let row of kpiRows; let idx = index"
+              [ngClass]="getKpiRowClass(row)"
+              [class.row-hovered]="hoveredRowIndex === idx"
+              (mouseenter)="setHoveredRowIndex(idx)"
+              (mouseleave)="setHoveredRowIndex(null)"
+              #leftRowRef>
             <td class="col-kra">{{ row.category }}</td>
             <td class="kpi-name-cell col-kpi"><b>{{ row.kpi }}</b></td>
             <td class="col-target">{{ row.target }}</td>
@@ -142,7 +151,12 @@
         </thead>
 
         <tbody>
-          <tr *ngFor="let row of kpiRows" [ngClass]="getKpiRowClass(row)" #rightRowRef>
+          <tr *ngFor="let row of kpiRows; let idx = index"
+              [ngClass]="getKpiRowClass(row)"
+              [class.row-hovered]="hoveredRowIndex === idx"
+              (mouseenter)="setHoveredRowIndex(idx)"
+              (mouseleave)="setHoveredRowIndex(null)"
+              #rightRowRef>
             <ng-container *ngFor="let metric of row.metrics">
               <td class="text-center achieved-cell">
                 {{ metric.achieved | number : '1.2-2' }}%
